@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # 
 # PROGRAMMER   : Rafael Mata M.
-# DATE CREATED :  1 March  2020                                 
-# REVISED DATE :  20 May  2020
+# DATE CREATED :  20 April 2020                                 
+# REVISED DATE :  19 jun   2020
 # PURPOSE: Create a function that retrieves the args for the covid track program
 #          from the user using the Argparse Python module. If the user does not 
 #          input the params default value is used. 
