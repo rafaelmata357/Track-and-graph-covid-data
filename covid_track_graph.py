@@ -42,15 +42,7 @@ def graph(dataset):
     subdata.sort_values(columnas[-1], ascending=False, inplace=True) #Ordena el DF por la ultima columna
 
     tograph = subdata.head(6)
-    #tograph.drop('China',axis = 0,inplace=True) #Get the top 6 countries with covid positive cases
-    #graphcr = tograph.append(subdata.loc[['Costa Rica','Panama','Brazil','Russia','Mexico']])      #Add Costa Rica data to graph
-    #print(subdata.index)
-    #print(graphcr)
-    #plt.figure(figsize=[12, 5])
-
-
-    #plt.subplot(1, 2, 1)
-    #plt.plot(tograph.T['US'])
+ 
     tograph.T.plot(ax=axes[0],grid=True, title='Datos por país',logy=True)  # Graph the transpose data
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
@@ -76,9 +68,6 @@ def graph(dataset):
 
     plt.show()
 
-    #daytotal = dataset.sum()  # Total cases per day
-    #daytotal.plot(grid=True,title='Total cases per day',logy=True)
-    #plt.show()
 
 
 if __name__ == '__main__':
