@@ -61,36 +61,41 @@ def graph(dataset, scale, top_n):
          None  
     '''
 
-    fig, axes = plt.subplots(nrows=1, ncols=2)
+    fig, axes = plt.subplots(nrows=1, ncols=2)                       #Generate subplots
    
-    subdata = dataset.groupby('Country/Region', axis=0).sum()   #Agrupa los dataos por país y los suma
+    subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
-    subdata.sort_values(columnas[-1], ascending=False, inplace=True) #Ordena el DF por la ultima columna
+    subdata.sort_values(columnas[-1], ascending=False, inplace=True) #Sort the data by the last column
 
-    tograph = subdata.head(6)
+    tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
  
-    tograph.T.plot(ax=axes[0],grid=True, title='Datos por país',logy=True)  # Graph the transpose data
+    tograph.T.plot(ax=axes[0],grid=True, title='Accumulated Covid Cases Top {} countries'.format(top_n),logy=True)  # Transpose and graph
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
     plt.yticks(scale, logscale)
     plt.xticks(fontsize=8, rotation=75)
     plt.grid(True, which='both')
-    plt.ylabel('#CASOS')
-    #plt.show()
+    #plt.ylabel('#CASOS')
 
-    #plt.subplot(1, 2, 2)
-    #print(graphcr.index)
-    graphcr = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Add Costa Rica data to graph
+    axes[0].set_xlabel('Date')
+    axes[0].set_ylabel('#Cases')
+
+    
+
+    graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Add Costa Rica data to graph
     #print(subdata.index)
     #print(graphcr)
 
-    graphcr.T.plot(ax=axes[1],grid=True, title='Datos por país', logy=True)  # Graph the transpose data
+    graphca.T.plot(ax=axes[1],grid=True, title='Accumulated Covid cases Mx & CA', logy=True)  # Graph the transpose data
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
     plt.yticks(scale, logscale)
     plt.xticks(fontsize=8, rotation=75)
     plt.grid(True, which='both')
-    plt.ylabel('#CASOS')
+
+    axes[1].set_xlabel('Date')
+    axes[1].set_ylabel('#Cases')
+    
 
     plt.show()
 
