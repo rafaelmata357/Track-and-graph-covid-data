@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  19 jun   2020
+# REVISED DATE :  21 jun   2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -28,10 +28,25 @@ from get_args import get_args
 
 URL ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 
-def cleandata(dataset):
+def cleandata(URL):
+
+    '''
+    Download the data from the JHU github repository and prepare the data to graph
+      
+    Args:
+        URL : url to the github raw data from JHU updated daily
+       
+   
+    
+    Returns:
+     dataset  : a pandas DF with the comple covid dataset   
+    '''
+
+    dataset = pd.read_csv(URL,index_col=0)  #Se lee los datos de github en formato .csv
     columna = dataset.columns
     dataset.set_index(columna[0], inplace=True)  # Para regenerar el indice por pais
     dataset.drop(['Lat', 'Long'], axis=1, inplace=True)  # Para eliminar las colunnas de Lat y Long
+    return dataset
 
 
 def graph(dataset):
