@@ -28,7 +28,7 @@ from get_args import get_args
 
 URL ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 
-def cleandata(URL):
+def get_and_cleandata(URL):
 
     '''
     Download the data from the JHU github repository and prepare the data to graph
@@ -49,9 +49,20 @@ def cleandata(URL):
     return dataset
 
 
-def graph(dataset):
+def graph(dataset, scale, top_n):
+    '''
+    From the Dataset this function graph the data for the top countries and central america countries 
+    upto date.
+      
+    Args:
+        URL : url to the github raw data from JHU updated daily
+       
+    Returns:
+         None  
+    '''
+
     fig, axes = plt.subplots(nrows=1, ncols=2)
-    #print(axes)
+   
     subdata = dataset.groupby('Country/Region', axis=0).sum()   #Agrupa los dataos por país y los suma
     columnas = list(subdata.columns)
     subdata.sort_values(columnas[-1], ascending=False, inplace=True) #Ordena el DF por la ultima columna
@@ -87,9 +98,8 @@ def graph(dataset):
 
 if __name__ == '__main__':
     
-    #Get variables from command line
-    
-    in_arg = get_args()
-    dataset = pd.read_csv(URL,index_col=0)  #Se lee los datos de github en formato .csv
-    cleandata(dataset)
-    graph(dataset)
+    in_arg = get_args()               #Get variables from command line
+    scale = in_arg.scale
+    top_n = in_arg.top_n
+    dataset = get_and_cleandata(URL)
+    graph(dataset, scale, top_n)
