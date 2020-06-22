@@ -25,7 +25,7 @@ import matplotlib.dates as mdates
 # Imports functions created for this program
 from get_args import get_args
 
-#URL to get the raw data 
+#URL to get the raw data from JHU update
 
 URL ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 
