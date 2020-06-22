@@ -61,7 +61,7 @@ def graph(dataset, scale, top_n):
          None  
     '''
 
-    fig, axes = plt.subplots(nrows=1, ncols=2)  #Generate subplots
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,7))  #Generate subplots
     fig.suptitle('Accumulated covid cases', fontsize=17)
    
     subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
@@ -70,19 +70,14 @@ def graph(dataset, scale, top_n):
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
  
-    tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
+    tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
 
-    
-    #plt.yticks(scale, logscale)
-    #plt.xticks(fontsize=8, rotation=75)
-    #plt.grid(True, which='both')
-    #plt.ylabel('#CASOS')
-    
-    axes[0].set_yticks(scale,logscale)
-    axes[0].grid(True, which='both')
-    axes[0].set_xlabel('Date', fontsize= 8)
+  
+    axes[0].set_yticks(scale)
+    axes[0].grid(True, which='minor')
+    axes[0].set_xlabel('Date', fontsize= 10)
     axes[0].set_ylabel('#Cases')
     
     r = axes[0].get_xticklabels()
