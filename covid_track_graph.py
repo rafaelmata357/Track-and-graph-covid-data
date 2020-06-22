@@ -20,6 +20,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # Imports functions created for this program
 from get_args import get_args
@@ -61,15 +62,22 @@ def graph(dataset, scale, top_n):
          None  
     '''
 
+    
+    months = mdates.MonthLocator()  # every month
+    mdays = mdates.DayLocator(interval=10)
+    months_fmt = mdates.DateFormatter('%b')
+    
     subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
+    subdata.columns = pd.to_datetime(columnas)  #Format date
+    print('Asi es:',subdata.columns)
+    initial_day = columnas[0]
+    last_day = columnas[-1]
     
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,7))  #Generate subplots
-    fig.suptitle('Accumulated Covid Cases until {}'.format(columnas[-1]), fontsize=17, c='b')
-   
-    
-   
-    subdata.sort_values(columnas[-1], ascending=False, inplace=True) #Sort the data by the last column
+    fig.suptitle('Accumulated Covid Cases until {}'.format(last_day), fontsize=17, c='b')
+          
+    subdata.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
  
@@ -79,7 +87,7 @@ def graph(dataset, scale, top_n):
 
   
     axes[0].set_yticks(scale)
-    axes[0].grid(True, which='minor')
+    axes[0].grid(True, which='both')
     axes[0].set_xlabel('Date', fontsize= 10)
     axes[0].set_ylabel('#Cases')
     
@@ -88,16 +96,31 @@ def graph(dataset, scale, top_n):
         i.set_rotation(75)
         i.set_fontsize(8)
     
-
-    #axes[0].set_xticklabels(fontsize=8)
-   
+    # format the ticks
+    axes[0].xaxis.set_major_locator(months)
+    axes[0].xaxis.set_major_formatter(months_fmt)
+    axes[0].xaxis.set_minor_locator(mdays)
 
     
+    # Set date min and date max for the x axis
+    f_date_min = '{}-{}-{}'.format(initial_day.split('/')[2]+'20', '0'+initial_day.split('/')[0], initial_day.split('/')[1])
+    f_date_max = '{}-{}-{}'.format(last_day.split('/')[2]+'20', '0'+last_day.split('/')[0], last_day.split('/')[1])
+    
+    print(f_date_min)
+    datemin = np.datetime64(f_date_min, 'M')
+    datemax = np.datetime64(f_date_max, 'M') + np.timedelta64(1, 'M')
+    axes[0].set_xlim(datemin, datemax)
+    
+    # format the ticks
+    #axes[0].xaxis.set_major_locator(months)
+    #axes[0].xaxis.set_major_formatter(months_fmt)
+    #axes[0].xaxis.set_minor_locator(mdays)
+    
 
-    graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Add Costa Rica data to graph
-  
-
-    graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mx', logy=True)  # Graph the transpose data
+    graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Get  CA data to graph
+    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases   
+    print(columnas) 
+    graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mx', logy=True)  # Plot the transpose data
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
     plt.yticks(scale, logscale)
