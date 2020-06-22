@@ -61,11 +61,14 @@ def graph(dataset, scale, top_n):
          None  
     '''
 
-    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,7))  #Generate subplots
-    fig.suptitle('Accumulated covid cases', fontsize=17)
-   
     subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
+    
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,7))  #Generate subplots
+    fig.suptitle('Accumulated Covid Cases until {}'.format(columnas[-1]), fontsize=17, c='b')
+   
+    
+   
     subdata.sort_values(columnas[-1], ascending=False, inplace=True) #Sort the data by the last column
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
