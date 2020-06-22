@@ -81,15 +81,20 @@ def graph(dataset, scale, top_n):
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
  
-    tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
-    scale = [1, 10, 100, 1000, 10000, 100000]
-    logscale = ['1', '10', '100', '1K', '10K', '100K']
-
-  
-    axes[0].set_yticks(scale)
+    
+    if scale == 'log':
+        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
+        scale_log = [1, 10, 100, 1000, 10000, 100000]
+        logscale = ['1', '10', '100', '1K', '10K', '100K']
+        axes[0].set_yticks(scale_log)
+        y_label = '#Cases Log Scale'
+    else:
+        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
+        y_label = '#Cases Linear Scale'
+    
     axes[0].grid(True, which='both')
     #axes[0].set_xlabel('Date', fontsize= 5)
-    axes[0].set_ylabel('#Cases')
+    axes[0].set_ylabel(y_label)
     
     r = axes[0].get_xticklabels()
     for i in r:
@@ -111,15 +116,22 @@ def graph(dataset, scale, top_n):
     graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases   
      
-    graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
-    scale = [1, 10, 100, 1000, 10000, 100000]
-    logscale = ['1', '10', '100', '1K', '10K', '100K']
-    plt.yticks(scale, logscale)
+    print(scale)
+    if scale == 'log':
+        print(scale)
+        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
+        scale_log = [1, 10, 100, 1000, 10000, 100000]
+        logscale = ['1', '10', '100', '1K', '10K', '100K']
+        plt.yticks(scale_log, logscale)
+    else:
+        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+    
+    
     plt.xticks(fontsize=10)
     plt.grid(True, which='both')
 
     #axes[1].set_xlabel('Date')
-    axes[1].set_ylabel('#Cases')
+    axes[1].set_ylabel(y_label)
 
     axes[1].xaxis.set_major_locator(months)
     axes[1].xaxis.set_major_formatter(months_fmt)
