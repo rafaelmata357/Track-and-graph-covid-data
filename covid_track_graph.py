@@ -61,7 +61,8 @@ def graph(dataset, scale, top_n):
          None  
     '''
 
-    fig, axes = plt.subplots(nrows=1, ncols=2)                       #Generate subplots
+    fig, axes = plt.subplots(nrows=1, ncols=2, constrained_layout=True)  #Generate subplots
+    fig.suptitle('Accumulated covid cases', fontsize=16)
    
     subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
@@ -69,24 +70,30 @@ def graph(dataset, scale, top_n):
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
  
-    tograph.T.plot(ax=axes[0],grid=True, title='Accumulated Covid Cases Top {} countries'.format(top_n),logy=True)  # Transpose and graph
+    tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
-    plt.yticks(scale, logscale)
-    plt.xticks(fontsize=8, rotation=75)
-    plt.grid(True, which='both')
-    #plt.ylabel('#CASOS')
 
+    
+    #plt.yticks(scale, logscale)
+    #plt.xticks(fontsize=8, rotation=75)
+    #plt.grid(True, which='both')
+    #plt.ylabel('#CASOS')
+    
+    axes[0].set_yticks(scale,logscale)
+    axes[0].grid(True, which='both')
     axes[0].set_xlabel('Date')
     axes[0].set_ylabel('#Cases')
+
+    #axes[0].set_xticklabels(fontsize=8, rotation=75)
+    #axes[0].tick_params(axis="x", fontsize=8, rotation=75)
 
     
 
     graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Add Costa Rica data to graph
-    #print(subdata.index)
-    #print(graphcr)
+  
 
-    graphca.T.plot(ax=axes[1],grid=True, title='Accumulated Covid cases Mx & CA', logy=True)  # Graph the transpose data
+    graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mx', logy=True)  # Graph the transpose data
     scale = [1, 10, 100, 1000, 10000, 100000]
     logscale = ['1', '10', '100', '1K', '10K', '100K']
     plt.yticks(scale, logscale)
