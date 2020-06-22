@@ -69,13 +69,13 @@ def graph(dataset, scale, top_n):
     
     subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
-    subdata.columns = pd.to_datetime(columnas)  #Format date
-    print('Asi es:',subdata.columns)
-    initial_day = columnas[0]
-    last_day = columnas[-1]
+    subdata.columns = pd.to_datetime(columnas)  #Change the format date
+    
+    initial_day = subdata.columns [0]
+    last_day = subdata.columns [-1]
     
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,7))  #Generate subplots
-    fig.suptitle('Accumulated Covid Cases until {}'.format(last_day), fontsize=17, c='b')
+    fig.suptitle('Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m/%Y')), fontsize=17, c='b')
           
     subdata.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
 
@@ -88,7 +88,7 @@ def graph(dataset, scale, top_n):
   
     axes[0].set_yticks(scale)
     axes[0].grid(True, which='both')
-    axes[0].set_xlabel('Date', fontsize= 10)
+    axes[0].set_xlabel('Date', fontsize= 5)
     axes[0].set_ylabel('#Cases')
     
     r = axes[0].get_xticklabels()
@@ -103,12 +103,9 @@ def graph(dataset, scale, top_n):
 
     
     # Set date min and date max for the x axis
-    f_date_min = '{}-{}-{}'.format(initial_day.split('/')[2]+'20', '0'+initial_day.split('/')[0], initial_day.split('/')[1])
-    f_date_max = '{}-{}-{}'.format(last_day.split('/')[2]+'20', '0'+last_day.split('/')[0], last_day.split('/')[1])
-    
-    print(f_date_min)
-    datemin = np.datetime64(f_date_min, 'M')
-    datemax = np.datetime64(f_date_max, 'M') + np.timedelta64(1, 'M')
+  
+    datemin = np.datetime64(initial_day, 'M')
+    datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
     axes[0].set_xlim(datemin, datemax)
     
     # format the ticks
