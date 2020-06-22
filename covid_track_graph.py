@@ -84,8 +84,8 @@ def graph(dataset, scale, top_n):
     
     if scale == 'log':
         tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
-        scale_log = [1, 10, 100, 1000, 10000, 100000]
-        logscale = ['1', '10', '100', '1K', '10K', '100K']
+        scale_log = [1, 10, 100, 1000, 10000, 100000,1000000,10000000]
+        logscale = ['1', '10', '100', '1K', '10K', '100K','1M','10M']
         plt.sca(axes[0])
         plt.yticks(scale_log, logscale)
         #axes[0].set_yticks(scale_log)
@@ -120,12 +120,11 @@ def graph(dataset, scale, top_n):
     graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador']]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases   
      
-    print(scale)
     if scale == 'log':
-        print(scale)
+       
         graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
-        scale_log = [1, 10, 100, 1000, 10000, 100000]
-        logscale = ['1', '10', '100', '1K', '10K', '100K']
+        scale_log = [1, 10, 100, 1000, 10000, 100000,1000000]
+        logscale = ['1', '10', '100', '1K', '10K', '100K','1M']
         plt.sca(axes[1])
         plt.yticks(scale_log, logscale)
     else:
