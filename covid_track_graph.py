@@ -86,13 +86,16 @@ def graph(dataset, scale, top_n):
         tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
         scale_log = [1, 10, 100, 1000, 10000, 100000]
         logscale = ['1', '10', '100', '1K', '10K', '100K']
-        axes[0].set_yticks(scale_log)
+        plt.sca(axes[0])
+        plt.yticks(scale_log, logscale)
+        #axes[0].set_yticks(scale_log)
         y_label = '#Cases Log Scale'
     else:
         tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
         y_label = '#Cases Linear Scale'
     
-    axes[0].grid(True, which='both')
+    axes[0].grid(True, which='major')
+    axes[0].grid(which='minor', color='k', linestyle=':', alpha=0.5)
     #axes[0].set_xlabel('Date', fontsize= 5)
     axes[0].set_ylabel(y_label)
     
@@ -105,6 +108,7 @@ def graph(dataset, scale, top_n):
     axes[0].xaxis.set_major_locator(months)
     axes[0].xaxis.set_major_formatter(months_fmt)
     axes[0].xaxis.set_minor_locator(mdays)
+    #axes[0].set_xticks(minor=False)
 
     
     # Set date min and date max for the x axis
@@ -122,13 +126,15 @@ def graph(dataset, scale, top_n):
         graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
         scale_log = [1, 10, 100, 1000, 10000, 100000]
         logscale = ['1', '10', '100', '1K', '10K', '100K']
+        plt.sca(axes[1])
         plt.yticks(scale_log, logscale)
     else:
         graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
     
     
     plt.xticks(fontsize=10)
-    plt.grid(True, which='both')
+    plt.grid(True, which='major')
+    plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
 
     #axes[1].set_xlabel('Date')
     axes[1].set_ylabel(y_label)
