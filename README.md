@@ -6,6 +6,12 @@ Two charts with the accumulated cases are generated with the app:
 - Top countries 
 - Central America region  and México 
 
+# Files in the repository
+
+- covid_track_graph.py  : Main script
+- get_args.py : Script to read the command line arguments
+- example.png : Output example image
+
 # Install
 Clone the repository to the local machine
 
@@ -32,3 +38,11 @@ In addition to get help execute:
 # Output Example:
 
 ![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example.png)
+
+# Terms of use:
+
+This script is made only to show how to read a dataset repository, process and graph using python, follow https://github.com/CSSEGISandData/COVID-19 regarding the dataset uses. 
+
+# License:
+
+The code follows this license: https://creativecommons.org/licenses/by/3.0/us/
