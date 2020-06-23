@@ -96,7 +96,7 @@ def graph(dataset, scale, top_n):
     
     axes[0].grid(True, which='major')
     axes[0].grid(which='minor', color='k', linestyle=':', alpha=0.5)
-    #axes[0].set_xlabel('Date', fontsize= 5)
+    axes[0].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset', fontsize= 5)
     axes[0].set_ylabel(y_label)
     
     r = axes[0].get_xticklabels()
@@ -135,7 +135,7 @@ def graph(dataset, scale, top_n):
     plt.grid(True, which='major')
     plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
 
-    #axes[1].set_xlabel('Date')
+    axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5)
     axes[1].set_ylabel(y_label)
 
     axes[1].xaxis.set_major_locator(months)
