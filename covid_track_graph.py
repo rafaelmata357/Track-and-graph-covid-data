@@ -117,7 +117,7 @@ def graph(dataset, scale, top_n, countries):
     datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
     axes[0].set_xlim(datemin, datemax)
 
-    ca = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
+    
     graphca = subdata.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases   
      
@@ -155,6 +155,9 @@ if __name__ == '__main__':
     scale = in_arg.scale
     top_n = in_arg.top_n
     countries = in_arg.country
+
+    if countries == '':
+        countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
     
     print(countries)
     dataset = get_and_cleandata(URL)
