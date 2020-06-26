@@ -51,8 +51,12 @@ def get_args():
     # Argument 2: Y axis scale to use
     parser.add_argument('--scale', type = str, default = 'log', choices=['log', 'lin'],
                     help = 'Y scale log or linear')    
+
+    # Argument 3: Country list
+    parser.add_argument('--country',type = str, default = '',  nargs='+',
+                    help = 'Country list') 
     
-   
+   #wrapper_descriptor
 
     return parser.parse_args()
 
