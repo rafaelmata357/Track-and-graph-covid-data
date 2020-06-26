@@ -50,7 +50,7 @@ def get_and_cleandata(URL):
     return dataset
 
 
-def graph(dataset, scale, top_n):
+def graph(dataset, scale, top_n, countries):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -117,7 +117,8 @@ def graph(dataset, scale, top_n):
     datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
     axes[0].set_xlim(datemin, datemax)
 
-    graphca = subdata.loc[['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']]  # Get  CA data to graph
+    ca = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
+    graphca = subdata.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases   
      
     if scale == 'log':
@@ -153,5 +154,8 @@ if __name__ == '__main__':
     in_arg = get_args()               #Get variables from command line
     scale = in_arg.scale
     top_n = in_arg.top_n
+    countries = in_arg.country
+    
+    print(countries)
     dataset = get_and_cleandata(URL)
-    graph(dataset, scale, top_n)
+    graph(dataset, scale, top_n, countries)
