@@ -149,6 +149,7 @@ def graph(dataset, scale, top_n, countries):
     axes[1].xaxis.set_major_formatter(months_fmt)
     axes[1].xaxis.set_minor_locator(mdays)
     axes[1].set_xlim(datemin, datemax)
+    plt.text(datemax,max_value,str(max_value))
     
 
     plt.show()
