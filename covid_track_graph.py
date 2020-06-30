@@ -12,6 +12,7 @@
 # 
 #  1. Top countries number                      --top 
 #  2. Scale                                     --scale
+#  3. Countries  list to plot                   --country
 ##
 
 # Imports python modules
@@ -21,6 +22,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import math
 
 # Imports functions created for this program
 from get_args import get_args
@@ -119,13 +121,17 @@ def graph(dataset, scale, top_n, countries):
 
     
     graphca = subdata.loc[countries]  # Get  CA data to graph
-    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases   
-     
+    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases  
+
+    max_value = graphca.max().max()     #Get maximum value from the dataset 
+    scale_log_labels = {1:'1',10:'10',100:'100',1000:'1K',10000:'10K',100000:'100K',1000000:'1M',10000000:'10M',100000000:'100M'}
+    positions = math.floor(math.log(max_value,10)) + 2          #Number of 10s power to generate the scale 
+    
     if scale == 'log':
        
         graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
-        scale_log = [1, 10, 100, 1000, 10000, 100000,1000000]
-        logscale = ['1', '10', '100', '1K', '10K', '100K','1M']
+        scale_log = [10**i for i in range(positions)]
+        logscale = [scale_log_labels[i] for i in scale_log]
         plt.sca(axes[1])
         plt.yticks(scale_log, logscale)
     else:
@@ -159,6 +165,6 @@ if __name__ == '__main__':
     if countries == '':
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
     
-    print(countries)
+    
     dataset = get_and_cleandata(URL)
     graph(dataset, scale, top_n, countries)
