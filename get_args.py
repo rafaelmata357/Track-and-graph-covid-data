@@ -31,6 +31,7 @@ def get_args():
     Args:
         1. Top n countries                           --top_n
         2. Log or linear scale for Y axis            --scale
+        3. Countries  list to plot                   --country
    
     This function returns these arguments as an ArgumentParser object.
     Parameters:
