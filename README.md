@@ -22,6 +22,7 @@ Clone the repository to the local machine
 The app has two options:
 - top_n: Option to specify the number (n) of countries to show in the graph
 - scale: Option to select between Log or Linear scale for the y axis of the graphs
+- country : specify the countries to plot the data
 
 From terminal command line execute:
 
