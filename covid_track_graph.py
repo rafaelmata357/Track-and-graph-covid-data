@@ -59,6 +59,11 @@ def get_and_cleandata(URL):
     return dataset, population
 
 
+def cases_population_ratio(population, dataset):
+    pass
+
+
+
 def graph(dataset, scale, top_n, countries):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
@@ -169,10 +174,19 @@ if __name__ == '__main__':
     scale = in_arg.scale
     top_n = in_arg.top_n
     countries = in_arg.country
+    pop = in_arg.pop
 
-    if countries == '':
+    if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
     
+    if pop == 'y':
+        pass
+
     
-    dataset = get_and_cleandata(URL)
+    dataset, population = get_and_cleandata(URL)
+    
+    if pop == 'y':
+        print(dataset)
+        print(population)
+
     graph(dataset, scale, top_n, countries)
