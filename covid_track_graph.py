@@ -60,7 +60,10 @@ def get_and_cleandata(URL):
 
 
 def cases_population_ratio(population, dataset):
-    pass
+    for country in dataset.index:
+        pop = population[population['Country']==country]['Population'].values[0] 
+        print('{} Population:{}'.format(country,pop))
+
 
 
 
@@ -179,14 +182,11 @@ if __name__ == '__main__':
     if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
     
-    if pop == 'y':
-        pass
 
     
     dataset, population = get_and_cleandata(URL)
     
     if pop == 'y':
-        print(dataset)
-        print(population)
+        cases_population_ratio(population, dataset)
 
     graph(dataset, scale, top_n, countries)
