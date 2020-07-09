@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  21 jun   2020
+# REVISED DATE :  9 july   2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -30,6 +30,8 @@ from get_args import get_args
 #URL to get the raw data JHU CSSE COVID-19 Dataset
 
 URL ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+URL_RECOVERED = 'RECOVERED'
+
 
 def get_and_cleandata(URL):
 
@@ -42,14 +44,19 @@ def get_and_cleandata(URL):
    
     
     Returns:
-     dataset  : a pandas DF with the comple covid dataset   
+     dataset  : a pandas DF with the comple covid dataset  
+     population: dataset with the population per country 
     '''
 
     dataset = pd.read_csv(URL,index_col=0)  #Se lee los datos de github en formato .csv
     columna = dataset.columns
     dataset.set_index(columna[0], inplace=True)  # Para regenerar el indice por pais
     dataset.drop(['Lat', 'Long'], axis=1, inplace=True)  # Para eliminar las colunnas de Lat y Long
-    return dataset
+
+    population = pd.read_excel('population.xlsx', 'data', index_col=0, na_values=['NA'])
+   
+    
+    return dataset, population
 
 
 def graph(dataset, scale, top_n, countries):
