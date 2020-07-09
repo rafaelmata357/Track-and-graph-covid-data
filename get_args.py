@@ -32,6 +32,7 @@ def get_args():
         1. Top n countries                           --top_n
         2. Log or linear scale for Y axis            --scale
         3. Countries  list to plot                   --country
+        4. Population ratio                          --pop 
    
     This function returns these arguments as an ArgumentParser object.
     Parameters:
@@ -56,6 +57,11 @@ def get_args():
     # Argument 3: Country list
     parser.add_argument('--country',type = str, default = '',  nargs='+',
                     help = 'Country list') 
+    
+    # Argument 4: Active cases / Population Ration
+      # Argument 2: Y axis scale to use
+    parser.add_argument('--pop', type = str, default = 'n', choices=['y', 'n'],
+                    help = 'Plot the cases/population')  
     
    #wrapper_descriptor
 
