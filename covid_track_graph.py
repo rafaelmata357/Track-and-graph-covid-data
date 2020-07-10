@@ -102,7 +102,7 @@ def graph(subdata, scale, top_n, countries, pop):
     if pop == 'y':
         title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
     else:
-        '2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m'))
+        title = '2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m'))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
@@ -177,7 +177,12 @@ def graph(subdata, scale, top_n, countries, pop):
     axes[1].xaxis.set_major_formatter(months_fmt)
     axes[1].xaxis.set_minor_locator(mdays)
     axes[1].set_xlim(datemin, datemax)
-    plt.text(datemax,max_value,str(max_value))
+    if pop == 'y':
+        maxvalue_str = '{:.2f}'.format(max_value)
+    else:
+        maxvalue_str = str(max_value)
+
+    plt.text(datemax,max_value, maxvalue_str)
     
 
     plt.show()
