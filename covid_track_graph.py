@@ -65,7 +65,7 @@ def cases_population_ratio(population, dataset):
     for country in dataset.index:
         try:
             pop = population[population['Country']==country]['Population'].values[0] 
-            dataset.loc[country] = dataset.loc[country] / pop
+            dataset.loc[country] = dataset.loc[country] / pop*1000000
             #print('{} Population:{}'.format(country,pop))
         except:
             print('Pais no encontrado {}'.format((country)))
@@ -75,7 +75,7 @@ def cases_population_ratio(population, dataset):
 
 
 
-def graph(subdata, scale, top_n, countries):
+def graph(subdata, scale, top_n, countries, pop):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -99,8 +99,13 @@ def graph(subdata, scale, top_n, countries):
     initial_day = subdata.columns [0]
     last_day = subdata.columns [-1]
     
+    if pop == 'y':
+        title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
+    else:
+        '2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m'))
+
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
-    fig.suptitle('2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m')), fontsize=17, c='b')
+    fig.suptitle(title, fontsize=17, c='b')
           
     subdata.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
 
@@ -196,5 +201,6 @@ if __name__ == '__main__':
     
     if pop == 'y':
         dataset = cases_population_ratio(population, dataset)
+        
 
-    graph(dataset, scale, top_n, countries)
+    graph(dataset, scale, top_n, countries, pop)
