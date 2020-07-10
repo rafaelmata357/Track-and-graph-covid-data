@@ -53,21 +53,29 @@ def get_and_cleandata(URL):
     dataset.set_index(columna[0], inplace=True)  # Para regenerar el indice por pais
     dataset.drop(['Lat', 'Long'], axis=1, inplace=True)  # Para eliminar las colunnas de Lat y Long
 
+
     population = pd.read_excel('population.xlsx', 'data', index_col=0, na_values=['NA'])
-   
+    subadata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     
-    return dataset, population
+    return subadata, population
+
 
 
 def cases_population_ratio(population, dataset):
     for country in dataset.index:
-        pop = population[population['Country']==country]['Population'].values[0] 
-        print('{} Population:{}'.format(country,pop))
+        try:
+            pop = population[population['Country']==country]['Population'].values[0] 
+            dataset.loc[country] = dataset.loc[country] / pop
+            #print('{} Population:{}'.format(country,pop))
+        except:
+            print('Pais no encontrado {}'.format((country)))
+    
+    return dataset
 
 
 
 
-def graph(dataset, scale, top_n, countries):
+def graph(subdata, scale, top_n, countries):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -84,7 +92,7 @@ def graph(dataset, scale, top_n, countries):
     mdays = mdates.DayLocator(interval=7)
     months_fmt = mdates.DateFormatter('%b')
     
-    subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
+    #subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
     subdata.columns = pd.to_datetime(columnas)  #Change the format date
     
@@ -187,6 +195,6 @@ if __name__ == '__main__':
     dataset, population = get_and_cleandata(URL)
     
     if pop == 'y':
-        cases_population_ratio(population, dataset)
+        dataset = cases_population_ratio(population, dataset)
 
     graph(dataset, scale, top_n, countries)
