@@ -68,14 +68,14 @@ def cases_population_ratio(population, dataset):
             dataset.loc[country] = dataset.loc[country] / pop*1000000
             #print('{} Population:{}'.format(country,pop))
         except:
-            print('Pais no encontrado {}'.format((country)))
+            pass #print('Pais no encontrado {}'.format((country)))
     
     return dataset
 
 
 
 
-def graph(subdata, scale, top_n, countries, pop):
+def graph(dataset, scale, top_n, countries, pop, population):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -92,7 +92,7 @@ def graph(subdata, scale, top_n, countries, pop):
     mdays = mdates.DayLocator(interval=7)
     months_fmt = mdates.DateFormatter('%b')
     
-    #subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
+    subdata = dataset #.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
     columnas = list(subdata.columns)
     subdata.columns = pd.to_datetime(columnas)  #Change the format date
     
@@ -110,6 +110,9 @@ def graph(subdata, scale, top_n, countries, pop):
     subdata.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+
+    if pop == 'y':
+        dataset = cases_population_ratio(population, dataset)
  
     
     if scale == 'log':
@@ -204,8 +207,7 @@ if __name__ == '__main__':
     
     dataset, population = get_and_cleandata(URL)
     
-    if pop == 'y':
-        dataset = cases_population_ratio(population, dataset)
+    
         
 
-    graph(dataset, scale, top_n, countries, pop)
+    graph(dataset, scale, top_n, countries, pop, population)
