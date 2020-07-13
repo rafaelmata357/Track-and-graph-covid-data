@@ -108,7 +108,7 @@ def get_log_scale(dataset):
 
 
 
-def graph(dataset, scale, top_n, countries, pop, population):
+def graph(dataset, scale, top_n, countries, pop, population, title_option):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -133,10 +133,10 @@ def graph(dataset, scale, top_n, countries, pop, population):
     dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
     if pop == 'y':
-        title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
+        title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
         dataset = cases_population_ratio(population, dataset)  # Calculate the cases/population ratio
     else:
-        title = '2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m'))
+        title = '2020 {} Covid Cases until {}'.format(title_option, last_day.strftime('%d/%m'))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
@@ -225,11 +225,14 @@ if __name__ == '__main__':
     
     if dataset_option == 'acc':
         URL = URL_ACCUMULATED_CASES
+        title_option = 'ACCUMULATED'
     elif dataset_option == 'rec':
         URL = URL_RECOVERED
+        title_option = 'RECOVERED'
     else:
         URL = URL_DEATHS
+        title_option = 'DEATHS'
      
     
     dataset, population = get_and_cleandata(URL)
-    graph(dataset, scale, top_n, countries, pop, population)
+    graph(dataset, scale, top_n, countries, pop, population, title_option)
