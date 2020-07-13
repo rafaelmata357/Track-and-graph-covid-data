@@ -29,7 +29,7 @@ from get_args import get_args
 
 #URL to get the raw data JHU CSSE COVID-19 Dataset
 
-URL ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+URL_ACCUMULATED_CASES ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 URL_RECOVERED = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
 URL_DEATHS = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
 
@@ -217,11 +217,18 @@ if __name__ == '__main__':
     top_n = in_arg.top_n
     countries = in_arg.country
     pop = in_arg.pop
+    dataset_option = in_arg.ds
 
     if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
     
-
+    if dataset_option == 'acc':
+        URL = URL_ACCUMULATED_CASES
+    elif dataset_option == 'rec':
+        URL = URL_RECOVERED
+    else:
+        URL = URL_DEATHS
+     
     
-    dataset, population = get_and_cleandata(URL_RECOVERED)
+    dataset, population = get_and_cleandata(URL)
     graph(dataset, scale, top_n, countries, pop, population)
