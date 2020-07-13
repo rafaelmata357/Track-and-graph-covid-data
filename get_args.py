@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  19 jun   2020
+# REVISED DATE :  13 july   2020
 # PURPOSE: Create a function that retrieves the args for the covid track program
 #          from the user using the Argparse Python module. If the user does not 
 #          input the params default value is used. 
@@ -59,9 +59,12 @@ def get_args():
                     help = 'Country list') 
     
     # Argument 4: Active cases / Population Ration
-      # Argument 2: Y axis scale to use
     parser.add_argument('--pop', type = str, default = 'n', choices=['y', 'n'],
                     help = 'Plot the cases/population')  
+    
+     # Argument 5: Dataset to plot
+    parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death'],
+                    help = 'Dataset to plot') 
     
    #wrapper_descriptor
 
