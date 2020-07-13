@@ -62,6 +62,17 @@ def get_and_cleandata(URL):
 
 
 def cases_population_ratio(population, dataset):
+    '''
+    From the Dataset this function calculate the accumulated cases/population ratio
+      
+    Args:
+        population : population per country
+        dataset : dataset with the accumulated cases
+       
+    Returns:
+         dataset: dataset with the accumulated cases/ population 
+    '''
+
     for country in dataset.index:
         try:
             pop = population[population['Country']==country]['Population'].values[0] 
