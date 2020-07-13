@@ -92,12 +92,12 @@ def graph(dataset, scale, top_n, countries, pop, population):
     mdays = mdates.DayLocator(interval=7)
     months_fmt = mdates.DateFormatter('%b')
     
-    subdata = dataset #.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
-    columnas = list(subdata.columns)
-    subdata.columns = pd.to_datetime(columnas)  #Change the format date
     
-    initial_day = subdata.columns [0]
-    last_day = subdata.columns [-1]
+    columnas = list(dataset.columns)
+    dataset.columns = pd.to_datetime(columnas)  #Change the format date
+    
+    initial_day = dataset.columns [0]
+    last_day = dataset.columns [-1]
     
     if pop == 'y':
         title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
@@ -108,9 +108,9 @@ def graph(dataset, scale, top_n, countries, pop, population):
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
           
-    subdata.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
+    dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
 
-    tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+    tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
      
  
@@ -151,7 +151,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
     axes[0].set_xlim(datemin, datemax)
 
     
-    graphca = subdata.loc[countries]  # Get  CA data to graph
+    graphca = dataset.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases  
 
     max_value = graphca.max().max()     #Get maximum value from the dataset 
@@ -206,8 +206,4 @@ if __name__ == '__main__':
 
     
     dataset, population = get_and_cleandata(URL)
-    
-    
-        
-
     graph(dataset, scale, top_n, countries, pop, population)
