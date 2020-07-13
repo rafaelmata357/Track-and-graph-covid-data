@@ -83,6 +83,26 @@ def cases_population_ratio(population, dataset):
     
     return dataset
 
+def get_log_scale(dataset):
+
+    '''
+    From the Dataset this function calculate the log scale to plot the data
+      
+    Args:
+       
+        dataset : dataset with the accumulated cases
+       
+    Returns:
+         logscale: list with the logscale values
+    '''
+
+    max_value = dataset.max().max()     #Get maximum value from the dataset 
+    scale_log_labels = {1:'1',10:'10',100:'100',1000:'1K',10000:'10K',100000:'100K',1000000:'1M',10000000:'10M',100000000:'100M'}
+    positions = math.floor(math.log(max_value,10)) + 2          #Number of 10s power to generate the scale 
+    scale_log = [10**i for i in range(positions)]
+    logscale = [scale_log_labels[i] for i in scale_log]
+
+    return scale_log, logscale, max_value
 
 
 
@@ -98,7 +118,6 @@ def graph(dataset, scale, top_n, countries, pop, population):
          None  
     '''
 
-    
     months = mdates.MonthLocator()  # every month
     mdays = mdates.DayLocator(interval=7)
     months_fmt = mdates.DateFormatter('%b')
@@ -124,8 +143,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
     
     if scale == 'log':
         tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
-        scale_log = [1, 10, 100, 1000, 10000, 100000,1000000,10000000]
-        logscale = ['1', '10', '100', '1K', '10K', '100K','1M','10M']
+        scale_log, logscale, max_value = get_log_scale(tograph)
         plt.sca(axes[0])
         plt.yticks(scale_log, logscale)
         #axes[0].set_yticks(scale_log)
@@ -157,16 +175,11 @@ def graph(dataset, scale, top_n, countries, pop, population):
     
     graphca = dataset.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases  
-
-    max_value = graphca.max().max()     #Get maximum value from the dataset 
-    scale_log_labels = {1:'1',10:'10',100:'100',1000:'1K',10000:'10K',100000:'100K',1000000:'1M',10000000:'10M',100000000:'100M'}
-    positions = math.floor(math.log(max_value,10)) + 2          #Number of 10s power to generate the scale 
     
+    scale_log, logscale, max_value = get_log_scale(graphca)
     if scale == 'log':
-       
         graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
-        scale_log = [10**i for i in range(positions)]
-        logscale = [scale_log_labels[i] for i in scale_log]
+        
         plt.sca(axes[1])
         plt.yticks(scale_log, logscale)
     else:
