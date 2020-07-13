@@ -101,6 +101,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
     
     if pop == 'y':
         title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
+        dataset = cases_population_ratio(population, dataset)
     else:
         title = '2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m'))
 
@@ -111,8 +112,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
 
     tograph = subdata.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
-    if pop == 'y':
-        dataset = cases_population_ratio(population, dataset)
+     
  
     
     if scale == 'log':
