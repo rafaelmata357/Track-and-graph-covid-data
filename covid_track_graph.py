@@ -102,19 +102,14 @@ def graph(dataset, scale, top_n, countries, pop, population):
     
     if pop == 'y':
         title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
-        dataset = cases_population_ratio(population, dataset)
+        dataset = cases_population_ratio(population, dataset)  # Calculate the cases/population ratio
     else:
         title = '2020 Accumulated Covid Cases until {}'.format(last_day.strftime('%d/%m'))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
           
-    
-
     tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
-
-     
- 
     
     if scale == 'log':
         tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
@@ -142,15 +137,12 @@ def graph(dataset, scale, top_n, countries, pop, population):
     axes[0].xaxis.set_major_locator(months)
     axes[0].xaxis.set_major_formatter(months_fmt)
     axes[0].xaxis.set_minor_locator(mdays)
-  
-
-    
+      
     # Set date min and date max for the x axis
   
     datemin = np.datetime64(initial_day, 'M')
     datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
     axes[0].set_xlim(datemin, datemax)
-
     
     graphca = dataset.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases  
