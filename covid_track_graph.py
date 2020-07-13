@@ -30,7 +30,8 @@ from get_args import get_args
 #URL to get the raw data JHU CSSE COVID-19 Dataset
 
 URL ='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
-URL_RECOVERED = 'RECOVERED'
+URL_RECOVERED = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
+URL_DEATHS = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
 
 
 def get_and_cleandata(URL):
@@ -222,5 +223,5 @@ if __name__ == '__main__':
     
 
     
-    dataset, population = get_and_cleandata(URL)
+    dataset, population = get_and_cleandata(URL_RECOVERED)
     graph(dataset, scale, top_n, countries, pop, population)
