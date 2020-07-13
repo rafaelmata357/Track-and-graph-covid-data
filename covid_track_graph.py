@@ -3,17 +3,18 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  9 july   2020
+# REVISED DATE :  13 july 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
 # 
 # Command Line Arguments:
 # 
-#  1. Top countries number                      --top 
-#  2. Scale                                     --scale
-#  3. Countries  list to plot                   --country
-##
+#  1. Top countries number                      --top {number}
+#  2. Scale                                     --scale {log/lin}
+#  3. Countries  list to plot                   --country {Country Name}
+#  4. Cases/Population                          --pop {y/n}
+## 5. Dataset accumulated, recoverd, deaths     --ds {acc, rec, death}
 
 # Imports python modules
 
