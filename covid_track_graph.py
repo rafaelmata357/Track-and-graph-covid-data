@@ -98,6 +98,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
     
     initial_day = dataset.columns [0]
     last_day = dataset.columns [-1]
+    dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
     if pop == 'y':
         title = '2020 Accumulated Covid  Cases until {} per 1M Population'.format(last_day.strftime('%d/%m'))
@@ -108,7 +109,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
           
-    dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
+    
 
     tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
@@ -141,7 +142,7 @@ def graph(dataset, scale, top_n, countries, pop, population):
     axes[0].xaxis.set_major_locator(months)
     axes[0].xaxis.set_major_formatter(months_fmt)
     axes[0].xaxis.set_minor_locator(mdays)
-    #axes[0].set_xticks(minor=False)
+  
 
     
     # Set date min and date max for the x axis
