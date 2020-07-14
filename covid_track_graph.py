@@ -117,7 +117,17 @@ def get_daily_values(dataset):
     Returns:
          daily_dataset: data frame with the daily values
     '''
-    pass
+    columns = dataset.columns
+    daily_value = np.empty(len(dataset)) # create a temporary numpy array to store the daily values 
+    daily_dataset = pd.DataFrame(index=dataset.index)
+    for country in columns: 
+        country_data = dataset[country] 
+        for i in range(len(country_data)-1): 
+            daily_value[-i-1] = country_data[-i-1] - country_data[-i-2] 
+            daily_value[0] = country_data[0] 
+        daily_dataset[country] = daily_value
+    
+    return daily_dataset
 
 
 
@@ -190,8 +200,10 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option):
     axes[0].set_xlim(datemin, datemax)
     
     graphca = dataset.loc[countries]  # Get  CA data to graph
-    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases  
-    
+    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
+
+    newdata = get_daily_values(graphca.T)
+    print(newdata)
     scale_log, logscale, max_value = get_log_scale(graphca)
     if scale == 'log':
         graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
