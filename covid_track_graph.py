@@ -106,6 +106,20 @@ def get_log_scale(dataset):
 
     return scale_log, logscale, max_value
 
+def get_daily_values(dataset):
+    '''
+    From the accumulated Dataset this function calculate the daily values
+      
+    Args:
+       
+        dataset : dataset with the accumulated cases
+       
+    Returns:
+         daily_dataset: data frame with the daily values
+    '''
+    pass
+
+
 
 
 def graph(dataset, scale, top_n, countries, pop, population, title_option):
@@ -126,7 +140,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option):
     
     
     columnas = list(dataset.columns)
-    dataset.columns = pd.to_datetime(columnas)  #Change the format date
+    dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
     
     initial_day = dataset.columns [0]
     last_day = dataset.columns [-1]
