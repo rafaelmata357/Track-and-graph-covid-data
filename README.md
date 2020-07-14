@@ -23,10 +23,12 @@ The app has two options:
 - top_n: Option to specify the number (n) of countries to show in the graph
 - scale: Option to select between Log or Linear scale for the y axis of the graphs
 - country : specify the countries to plot the data
+- pop : specify if the plot value is the ratio cases/population option: [y,n]
+- ds  : Dataset options, accumulated cases, recovered cases, deaths option: [acc, rec, death]
 
 From terminal command line execute:
 
-`$ python covid_track_graph.py --top_n n  --scale [log | lin]`
+`$ python covid_track_graph.py --top_n n  --scale [log | lin] --pop [y|n] --ds [acc|rec|death]`
 
 Example:
 
