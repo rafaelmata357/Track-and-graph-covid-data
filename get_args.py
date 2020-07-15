@@ -65,6 +65,10 @@ def get_args():
      # Argument 5: Dataset to plot
     parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death'],
                     help = 'Dataset to plot') 
+
+     # Argument 6: Accumulated data
+    parser.add_argument('--acc', type = str, default = 'y', choices=['y', 'n'],
+                    help = 'Plot accumulated data') 
     
    #wrapper_descriptor
 
