@@ -62,7 +62,7 @@ def get_args():
     parser.add_argument('--pop', type = str, default = 'n', choices=['y', 'n'],
                     help = 'Plot the cases/population')  
     
-     # Argument 5: Dataset to plot
+     # Argument 5: Dataset to plot Accumulated, Recovered, Deaths cases
     parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death'],
                     help = 'Dataset to plot') 
 
