@@ -66,9 +66,9 @@ def get_args():
     parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death'],
                     help = 'Dataset to plot') 
 
-     # Argument 6: Accumulated data
-    parser.add_argument('--acc', type = str, default = 'y', choices=['y', 'n'],
-                    help = 'Plot accumulated data') 
+     # Argument 6: Time Frame
+    parser.add_argument('--tf', type = str, default = 'daily', choices=['daily', 'weekly', 'monthly'],
+                    help = 'Time frame to plot the data') 
     
    #wrapper_descriptor
 
