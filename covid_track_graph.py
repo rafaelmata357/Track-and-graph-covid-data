@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  13 july 2020
+# REVISED DATE :  15 july 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -132,7 +132,7 @@ def get_daily_values(dataset):
 
 
 
-def graph(dataset, scale, top_n, countries, pop, population, title_option):
+def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -175,7 +175,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option):
         #axes[0].set_yticks(scale_log)
         y_label = '#Cases Log Scale'
     else:
-        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
+        tograph.T.plot.bar(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
         y_label = '#Cases Linear Scale'
     
     axes[0].grid(True, which='major')
@@ -189,9 +189,9 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option):
         i.set_fontsize(10)
     
     # format the ticks
-    axes[0].xaxis.set_major_locator(months)
-    axes[0].xaxis.set_major_formatter(months_fmt)
-    axes[0].xaxis.set_minor_locator(mdays)
+    #axes[0].xaxis.set_major_locator(months)
+    #axes[0].xaxis.set_major_formatter(months_fmt)
+    #axes[0].xaxis.set_minor_locator(mdays)
       
     # Set date min and date max for the x axis
   
@@ -201,30 +201,38 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option):
     
     graphca = dataset.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
-
-    newdata = get_daily_values(graphca.T)
-    print(newdata)
-    scale_log, logscale, max_value = get_log_scale(graphca)
-    if scale == 'log':
-        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
+    
+    if time_frame != 'daily':
+        daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
+        daily_dataset['week'] = daily_dataset.index.week
+        daily_dataset['month'] = daily_dataset.index.month
         
-        plt.sca(axes[1])
-        plt.yticks(scale_log, logscale)
+        if time_frame == 'weekly':
+            daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+        elif time_frame == 'monthly':
+            daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
     else:
-        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+        if scale == 'log':
+            scale_log, logscale, max_value = get_log_scale(graphca)
+            graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
+            plt.sca(axes[1])
+            plt.yticks(scale_log, logscale)
+        else:
+            graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
     
-    
-    plt.xticks(fontsize=10)
-    plt.grid(True, which='major')
-    plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+        plt.xticks(fontsize=10)
+        plt.grid(True, which='major')
+        plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+        axes[1].set_xlim(datemin, datemax)   
+   
 
     axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5)
     axes[1].set_ylabel(y_label)
 
-    axes[1].xaxis.set_major_locator(months)
-    axes[1].xaxis.set_major_formatter(months_fmt)
-    axes[1].xaxis.set_minor_locator(mdays)
-    axes[1].set_xlim(datemin, datemax)
+    #axes[1].xaxis.set_major_locator(months)
+    #axes[1].xaxis.set_major_formatter(months_fmt)
+    #axes[1].xaxis.set_minor_locator(mdays)
+    
     if pop == 'y':
         maxvalue_str = '{:.2f}'.format(max_value)
     else:
@@ -245,6 +253,7 @@ if __name__ == '__main__':
     countries = in_arg.country
     pop = in_arg.pop
     dataset_option = in_arg.ds
+    time_frame = in_arg.tf
 
     if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
@@ -261,4 +270,4 @@ if __name__ == '__main__':
      
     
     dataset, population = get_and_cleandata(URL)
-    graph(dataset, scale, top_n, countries, pop, population, title_option)
+    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame)
