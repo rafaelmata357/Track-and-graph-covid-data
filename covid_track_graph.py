@@ -175,7 +175,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
         #axes[0].set_yticks(scale_log)
         y_label = '#Cases Log Scale'
     else:
-        tograph.T.plot.bar(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
+        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
         y_label = '#Cases Linear Scale'
     
     axes[0].grid(True, which='major')
@@ -206,14 +206,18 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
         daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
         daily_dataset['week'] = daily_dataset.index.week
         daily_dataset['month'] = daily_dataset.index.month
+        y_label = '#Cases Linear Scale'
         
         if time_frame == 'weekly':
             daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+            axes[1].set_xlabel('Week',fontsize=8)
         elif time_frame == 'monthly':
             daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+            axes[1].set_xlabel('Month',fontsize=8)
     else:
+        scale_log, logscale, max_value = get_log_scale(graphca)
         if scale == 'log':
-            scale_log, logscale, max_value = get_log_scale(graphca)
+            
             graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
             plt.sca(axes[1])
             plt.yticks(scale_log, logscale)
@@ -223,22 +227,25 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
         plt.xticks(fontsize=10)
         plt.grid(True, which='major')
         plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
-        axes[1].set_xlim(datemin, datemax)   
+        axes[1].set_xlim(datemin, datemax) 
+        if pop == 'y':
+            maxvalue_str = '{:.2f}'.format(max_value)
+        else:
+            maxvalue_str = str(max_value)
+        plt.text(datemax,max_value, maxvalue_str) 
+        axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
    
 
-    axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5)
+    
     axes[1].set_ylabel(y_label)
 
     #axes[1].xaxis.set_major_locator(months)
     #axes[1].xaxis.set_major_formatter(months_fmt)
     #axes[1].xaxis.set_minor_locator(mdays)
     
-    if pop == 'y':
-        maxvalue_str = '{:.2f}'.format(max_value)
-    else:
-        maxvalue_str = str(max_value)
+    
 
-    plt.text(datemax,max_value, maxvalue_str)
+    
     
 
     plt.show()
