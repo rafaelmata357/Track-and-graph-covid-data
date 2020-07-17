@@ -129,6 +129,9 @@ def get_daily_values(dataset):
     
     return daily_dataset
 
+def benford(dataset):
+    pass
+
 
 
 
