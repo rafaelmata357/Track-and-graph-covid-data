@@ -151,7 +151,7 @@ def benford(dataset):
                 if first_digit in ['1','2','3','4','5','6','7','8','9']:
                     digits_map[first_digit] += 1                         #Count the number of firts digits for the daily values
     else:
-        for number in daily_values:
+        for Number in daily_values:
             first_digit = str(number)[0]
             if first_digit in ['1','2','3','4','5','6','7','8','9']:
                 digits_map[first_digit] += 1          
@@ -159,13 +159,7 @@ def benford(dataset):
 
     return digits_map          
 
-                
-  
-
-
-
-
-def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame):
+def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -242,30 +236,39 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
         y_label = '#Cases Linear Scale'
         
         if time_frame == 'weekly':
-            daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+            daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Weekly accumuled values', logy=False)  # Plot the transpose data
             axes[1].set_xlabel('Week',fontsize=8)
         elif time_frame == 'monthly':
-            daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+            daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Nonthly accumulated values', logy=False)  # Plot the transpose data
             axes[1].set_xlabel('Month',fontsize=8)
     else:
         scale_log, logscale, max_value = get_log_scale(graphca)
-        if scale == 'log':
+        if benf == 'y':
+            digits_map = benford(graphca)
+            y_label = '%'
+            digits_values = np.array(list(digits_map.values()))
+            digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
+            axes[1].bar(digits_map.keys(), digits_values ) 
+            axes[1].title='Benford Law analysis'
+            axes[1].set_xlabel('First Digits of the dataset',fontsize=8)
+        else:
+            if scale == 'log':
             
-            graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
-            plt.sca(axes[1])
-            plt.yticks(scale_log, logscale)
-        else:
-            graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+                graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
+                plt.sca(axes[1])
+                plt.yticks(scale_log, logscale)
+            else:
+                graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
     
-        plt.xticks(fontsize=10)
-        plt.grid(True, which='major')
-        plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
-        axes[1].set_xlim(datemin, datemax) 
-        if pop == 'y':
-            maxvalue_str = '{:.2f}'.format(max_value)
-        else:
-            maxvalue_str = str(max_value)
-        plt.text(datemax,max_value, maxvalue_str) 
+            plt.xticks(fontsize=10)
+            plt.grid(True, which='major')
+            plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+            axes[1].set_xlim(datemin, datemax) 
+            if pop == 'y':
+                maxvalue_str = '{:.2f}'.format(max_value)
+            else:
+                maxvalue_str = str(max_value)
+            plt.text(datemax,max_value, maxvalue_str) 
         axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
    
 
@@ -289,6 +292,7 @@ if __name__ == '__main__':
     pop = in_arg.pop
     dataset_option = in_arg.ds
     time_frame = in_arg.tf
+    benf = in_arg.benf
 
     if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
@@ -303,6 +307,6 @@ if __name__ == '__main__':
         URL = URL_DEATHS
         title_option = 'DEATHS'
      
-    
+    print(benf)
     dataset, population = get_and_cleandata(URL)
-    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame)
+    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf)
