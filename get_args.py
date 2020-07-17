@@ -70,6 +70,10 @@ def get_args():
     parser.add_argument('--tf', type = str, default = 'daily', choices=['daily', 'weekly', 'monthly'],
                     help = 'Time frame to plot the data') 
     
+    # Argument 6: Apply Benford´s Law analysis
+    parser.add_argument('--benf', type = str, default = 'n', choices=['y', 'n'],
+                    help = 'Apply Benford´s Law analysis') 
+    
    #wrapper_descriptor
 
     return parser.parse_args()
