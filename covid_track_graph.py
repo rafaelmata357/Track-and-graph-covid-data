@@ -130,7 +130,37 @@ def get_daily_values(dataset):
     return daily_dataset
 
 def benford(dataset):
-    pass
+    '''
+    From the daily Dataset values this function calculate the benford laws to analyze the data reported
+      
+    Args:
+       
+        dataset : dataset with the accumulated cases
+       
+    Returns:
+         benford_dataset: data with the accumulated values for the first digit
+    '''
+    
+    digits_map = {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0}
+    daily_values = dataset.values
+
+    if len(dataset.shape) > 1:   #Check if is a vector single country data or matrix more than one country data
+        for vector in daily_values:
+            for number in vector:
+                first_digit = str(number)[0]
+                if first_digit in ['1','2','3','4','5','6','7','8','9']:
+                    digits_map[first_digit] += 1                         #Count the number of firts digits for the daily values
+    else:
+        for number in daily_values:
+            first_digit = str(number)[0]
+            if first_digit in ['1','2','3','4','5','6','7','8','9']:
+                digits_map[first_digit] += 1          
+
+
+    return digits_map          
+
+                
+  
 
 
 
@@ -246,14 +276,9 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     #axes[1].xaxis.set_major_formatter(months_fmt)
     #axes[1].xaxis.set_minor_locator(mdays)
     
-    
-
-    
-    
-
     plt.show()
 
-
+#MAIN PROGRAM
 
 if __name__ == '__main__':
     
