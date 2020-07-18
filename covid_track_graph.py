@@ -198,12 +198,14 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     
     if benf == 'n':
         tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+        gtitle = 'Top {} countries'.format(top_n)
     else:
         tograph = graphca
+        gtitle = '{} countries'.format(countries)
     
     
     if scale == 'log':
-        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
+        tograph.T.plot(ax=axes[0],grid=True, title=gtitle,logy=True)  # Transpose and graph
         scale_log, logscale, max_value = get_log_scale(tograph)
         plt.sca(axes[0])
         plt.yticks(scale_log, logscale)
@@ -236,7 +238,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     
     
     
-    if time_frame != 'daily':
+    if time_frame != 'daily': #Plot accumulated values weekly or monthly
         daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
         daily_dataset['week'] = daily_dataset.index.week
         daily_dataset['month'] = daily_dataset.index.month
@@ -250,13 +252,13 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
             axes[1].set_xlabel('Month',fontsize=8)
     else:
         scale_log, logscale, max_value = get_log_scale(graphca)
-        if benf == 'y':
+        if benf == 'y':    #Plot Benford analysis
             digits_map = benford(graphca)
             y_label = '%Probability'
             
             digits_values = np.array(list(digits_map.values()))
             digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
-            df = pd.DataFrame({'P(D)':digits_values},index=digits_map.keys())
+            df = pd.DataFrame({'P(D)':digits_values,'Benford´s Law':[30.1,17.6,12.5,9.7,7.9,6.7,5.8,5.1,4.6]},index=digits_map.keys())
             df.plot.bar(ax=axes[1],grid=True, title='Benford Law Analysis {}'.format(countries), logy=False)
             axes[1].set_xlabel('First Digits of the dataset',fontsize=8)
         else:
