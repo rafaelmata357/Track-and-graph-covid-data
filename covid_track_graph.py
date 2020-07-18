@@ -212,7 +212,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
         #axes[0].set_yticks(scale_log)
         y_label = '#Cases Log Scale'
     else:
-        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=False)  # Transpose and graph
+        tograph.T.plot(ax=axes[0],grid=True, title=gtitle, logy=False)  # Transpose and graph
         y_label = '#Cases Linear Scale'
     
     axes[0].grid(True, which='major')
