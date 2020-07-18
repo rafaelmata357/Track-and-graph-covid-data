@@ -43,6 +43,8 @@ In addition to get help execute:
 # Output Example:
 
 ![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example.png)
+![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/benfords%20analysis%20example.png)
+![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/weekly%20cases%20example.png)
 
 # Terms of use:
 
