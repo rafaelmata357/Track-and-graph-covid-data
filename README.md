@@ -26,7 +26,7 @@ The app has two options:
 - pop : specify if the plot value is the ratio cases/population option: [y,n]
 - ds  : Dataset options, accumulated cases, recovered cases, deaths option: [acc, rec, death]
 - tf  : Time frame option [daily, weekly, monthly]
-- benf: Benfords´s Law anaylisis to check if the dataset sastify this law (https://en.wikipedia.org/wiki/Benford%27s_law#:~:text=Benford's%20law%2C%20also%20called%20the,life%20sets%20of%20numerical%20data.&text=If%20the%20digits%20were%20distributed,about%2011.1%25%20of%20the%20time.)
+- benf: Benfords´s Law anaylisis to check if the dataset sastify this law 
 
 From terminal command line execute:
 
