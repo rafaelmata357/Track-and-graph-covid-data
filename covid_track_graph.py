@@ -239,17 +239,18 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
             daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Weekly accumuled values', logy=False)  # Plot the transpose data
             axes[1].set_xlabel('Week',fontsize=8)
         elif time_frame == 'monthly':
-            daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Nonthly accumulated values', logy=False)  # Plot the transpose data
+            daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Monthly accumulated values', logy=False)  # Plot the transpose data
             axes[1].set_xlabel('Month',fontsize=8)
     else:
         scale_log, logscale, max_value = get_log_scale(graphca)
         if benf == 'y':
             digits_map = benford(graphca)
-            y_label = '%'
+            y_label = '%Probability'
+            
             digits_values = np.array(list(digits_map.values()))
             digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
-            axes[1].bar(digits_map.keys(), digits_values ) 
-            axes[1].title='Benford Law analysis'
+            df = pd.DataFrame({'P(D)':digits_values},index=digits_map.keys())
+            df.plot.bar(ax=axes[1],grid=True, title='Benford Law Analysis {}'.format(countries), logy=False)
             axes[1].set_xlabel('First Digits of the dataset',fontsize=8)
         else:
             if scale == 'log':
@@ -269,7 +270,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
             else:
                 maxvalue_str = str(max_value)
             plt.text(datemax,max_value, maxvalue_str) 
-        axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
+            axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
    
 
     
