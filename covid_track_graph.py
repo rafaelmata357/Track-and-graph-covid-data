@@ -191,8 +191,16 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
+
+    graphca = dataset.loc[countries]  # Get  CA data to graph
+    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
           
-    tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+    
+    if benf == 'n':
+        tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+    else:
+        tograph = graphca
+    
     
     if scale == 'log':
         tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
@@ -226,8 +234,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
     axes[0].set_xlim(datemin, datemax)
     
-    graphca = dataset.loc[countries]  # Get  CA data to graph
-    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
+    
     
     if time_frame != 'daily':
         daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
