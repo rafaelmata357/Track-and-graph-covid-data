@@ -141,7 +141,7 @@ def benford(dataset):
          benford_dataset: data with the accumulated values for the first digit
     '''
     
-    digits_map = {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0}
+    digits_map = {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0}  #Digits hash table
     daily_values = dataset.values
 
     if len(dataset.shape) > 1:   #Check if is a vector single country data or matrix more than one country data
@@ -196,7 +196,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
           
     
-    if benf == 'n':
+    if benf == 'n' and time_frame == 'daily':
         tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
         gtitle = 'Top {} countries'.format(top_n)
     else:
