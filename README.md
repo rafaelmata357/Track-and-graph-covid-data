@@ -26,10 +26,11 @@ The app has two options:
 - pop : specify if the plot value is the ratio cases/population option: [y,n]
 - ds  : Dataset options, accumulated cases, recovered cases, deaths option: [acc, rec, death]
 - tf  : Time frame option [daily, weekly, monthly]
+- benf: Benfords´s Law anaylisis to check if the dataset sastify this law
 
 From terminal command line execute:
 
-`$ python covid_track_graph.py --top_n n  --scale [log | lin] --pop [y|n] --ds [acc|rec|death] -tf [daily, weekly, monthly]`
+`$ python covid_track_graph.py --top_n n  --scale [log | lin] --pop [y|n] --ds [acc|rec|death] -tf [daily | weekly | monthly] --benf [y|n] `
 
 Example:
 
