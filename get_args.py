@@ -63,7 +63,7 @@ def get_args():
                     help = 'Plot the cases/population')  
     
      # Argument 5: Dataset to plot Accumulated, Recovered, Deaths cases
-    parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death'],
+    parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death','act'],
                     help = 'Dataset to plot') 
 
      # Argument 6: Time Frame
