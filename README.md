@@ -27,10 +27,11 @@ The app has two options:
 - ds  : Dataset options, accumulated cases, recovered cases, deaths option: [acc, rec, death]
 - tf  : Time frame option [daily, weekly, monthly]
 - benf: Benfords´s Law anaylisis to check if the dataset sastify this law 
+- test_rate: Plots the positive cases vs tests ratio
 
 From terminal command line execute:
 
-`$ python covid_track_graph.py --top_n n  --scale [log | lin] --pop [y|n] --ds [acc|rec|death] -tf [daily | weekly | monthly] --benf [y|n] `
+`$ python covid_track_graph.py --top_n n  --scale [log | lin] --pop [y|n] --ds [acc|rec|death] -tf [daily | weekly | monthly] --benf [y|n]  --test_ratio [y|n]`
 
 Example:
 
