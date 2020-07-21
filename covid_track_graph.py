@@ -203,11 +203,11 @@ def daily_test(URL, countries, daily_dataset, time_frame):
 
     if time_frame == 'weekly':
         df2 = df.groupby('week').sum()[[countries[0],'Daily change in cumulative total']] 
-        df2['ratio'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
+        df2['Positive Cases'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
     else:
         df2 = df.groupby('month').sum()[[countries[0],'Daily change in cumulative total']]
-        df2['ratio'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
-    
+        df2['Positive Cases'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
+    df2['WHO Recommend tests ratio'] = 10  #Set the WHO reccomended test/cases ratio 10% 
     
     return df2
 
@@ -298,12 +298,13 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
         if test_ratio == 'y':
             y_label = '%Positive Cases'
             test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
+            
             if time_frame == 'weekly':
-                test_ratio_df.plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests weekly', logy=False)
+                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests weekly {}'.format(countries), logy=False)
 
                 axes[1].set_xlabel('Week',fontsize=8)
             else:
-                test_ratio_df.plot.bar(ax=axes[1],grid=True, title='%Positive cases vs test Monthly', logy=False)
+                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs test Monthly {}'.format(countries), logy=False)
                 axes[1].set_xlabel('Month',fontsize=8)
                 
         
@@ -385,6 +386,8 @@ if __name__ == '__main__':
     else:
         URL = URL_DEATHS
         title_option = 'DEATHS'
+    
+    print(countries)
      
     
     dataset, population = get_and_cleandata(URL)
