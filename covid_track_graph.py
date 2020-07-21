@@ -189,14 +189,41 @@ def daily_test(URL, countries, daily_dataset, time_frame):
          test_dataset: dataset with the daily tests performed and merge with the accumulated cases
     '''   
 
+    COUNTRY_MAP_TO_JSU = {'Argentina', 'Australia', 'Austria', 'Bahrain', 'Bangladesh', 'Belarus', 'Belgium', 'Bolivia', 'Brazil', 'Bulgaria', 'Canada',
+                          'Chile', 'Colombia', 'Costa Rica', 'Croatia', 'Cuba', 'Czech Republic', 'Democratic Republic of Congo', 'Denmark', 'Ecuador',
+                          'El Salvador', 'Estonia', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Germany', 'Ghana', 'Greece', 'Hong Kong', 'Hungary', 'Iceland',
+                          'India', 'Indonesia', 'Iran', 'Ireland', 'Israel' , 'Italy', 'Japan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Latvia', 'Lithuania',
+                          'Luxembourg', 'Malaysia', 'Maldives', 'Malta', 'Mexico', 'Morocco', 'Myanmar', 'Nepal', 'Netherlands', 'New Zealand', 'Nigeria',
+                          'Norway', 'Oman', 'Pakistan', 'Panama', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia',
+                          'Rwanda', 'Saudi Arabia', 'Senegal', 'Serbia', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain',
+                          'Sweden', 'Switzerland', 'Taiwan', 'Thailand', 'Togo', 'Tunisia', 'Turkey' , 'Uganda', 'Ukraine', 'United Arab Emirates',
+                          'United Kingdom', 'United States', 'Uruguay', 'Vietnam', 'Zimbabwe'}
+    
+    MAP_JSU_to_OWD = {'Korea, South':'South Korea', 'Taiwan*':'Taiwan', 'US':'United States', 'Czechia':'Czech Republic'}
+    
+    if countries[0] in MAP_JSU_to_OWD:
+        country = MAP_JSU_to_OWD[countries[0]]
+    else:
+        country = countries[0]
+    
+   
+    
     dataset = pd.read_csv(URL,index_col=0) 
-    daily_test_dataset = dataset[dataset.index.str.contains(countries[0])][['Date','Daily change in cumulative total']]
+    daily_test_dataset = dataset[dataset.index.str.contains(country)][['Date','Daily change in cumulative total']]
     dates = pd.to_datetime(daily_test_dataset.Date.values)
     daily_test_dataset.set_index(dates,inplace=True)
     daily_test_dataset.drop(['Date'], axis=1, inplace=True)
+    daily_test_dataset.dropna(axis=0, inplace=True)
+
+    print(daily_dataset)
+    print('--------------------')
+    print(daily_test_dataset)
+    print('---------------------')
 
     df = pd.concat([daily_dataset,daily_test_dataset],axis=1)
     df.dropna(axis=0, inplace=True)
+    print('---------------------')
+    print(df)
     
     df['week'] = df.index.week
     df['month'] = df.index.month
