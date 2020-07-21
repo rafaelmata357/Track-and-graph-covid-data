@@ -175,7 +175,7 @@ def calculate_active_cases(recovered_datase, accumulated_dataset):
     
  
      
-def daily_test(URL, countries, dataset):
+def daily_test(URL, countries, daily_dataset, time_frame):
     '''
     From the tests Dataset URL from the our world in data (https://ourworldindata.org/coronavirus)
       
@@ -190,18 +190,30 @@ def daily_test(URL, countries, dataset):
     '''   
 
     dataset = pd.read_csv(URL,index_col=0) 
-    daily_test_dataset = dataset[dataset.index.str.contains(countries[0])][['Date','Cumulative total','Daily change in cumulative total']]
+    daily_test_dataset = dataset[dataset.index.str.contains(countries[0])][['Date','Daily change in cumulative total']]
     dates = pd.to_datetime(daily_test_dataset.Date.values)
     daily_test_dataset.set_index(dates,inplace=True)
     daily_test_dataset.drop(['Date'], axis=1, inplace=True)
 
-    df=pd.concat([cr,dt],axis=1)
+    df = pd.concat([daily_dataset,daily_test_dataset],axis=1)
+    df.dropna(axis=0, inplace=True)
     
-    return daily_test_dataset
+    df['week'] = df.index.week
+    df['month'] = df.index.month
+
+    if time_frame == 'weekly':
+        df2 = df.groupby('week').sum()[[countries[0],'Daily change in cumulative total']] 
+        df2['ratio'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
+    else:
+        df2 = df.groupby('month').sum()[[countries[0],'Daily change in cumulative total']]
+        df2['ratio'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
+    
+    
+    return df2
 
 
 
-def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf):
+def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, test_ratio, URL):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -282,16 +294,30 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     
     if time_frame != 'daily': #Plot accumulated values weekly or monthly
         daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
-        daily_dataset['week'] = daily_dataset.index.week
-        daily_dataset['month'] = daily_dataset.index.month
-        y_label = '#Cases Linear Scale'
         
-        if time_frame == 'weekly':
-            daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Weekly accumuled values', logy=False)  # Plot the transpose data
-            axes[1].set_xlabel('Week',fontsize=8)
-        elif time_frame == 'monthly':
-            daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Monthly accumulated values', logy=False)  # Plot the transpose data
-            axes[1].set_xlabel('Month',fontsize=8)
+        if test_ratio == 'y':
+            y_label = '%Positive Cases'
+            test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
+            if time_frame == 'weekly':
+                test_ratio_df.plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests weekly', logy=False)
+
+                axes[1].set_xlabel('Week',fontsize=8)
+            else:
+                test_ratio_df.plot.bar(ax=axes[1],grid=True, title='%Positive cases vs test Monthly', logy=False)
+                axes[1].set_xlabel('Month',fontsize=8)
+                
+        
+        else:
+            daily_dataset['week'] = daily_dataset.index.week
+            daily_dataset['month'] = daily_dataset.index.month
+            y_label = '#Cases Linear Scale'
+        
+            if time_frame == 'weekly':
+                daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Weekly accumuled values', logy=False)  # Plot the transpose data
+                axes[1].set_xlabel('Week',fontsize=8)
+            elif time_frame == 'monthly':
+                daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Monthly accumulated values', logy=False)  # Plot the transpose data
+                axes[1].set_xlabel('Month',fontsize=8)
     else:
         scale_log, logscale, max_value = get_log_scale(graphca)
         if benf == 'y':    #Plot Benford analysis
@@ -345,6 +371,7 @@ if __name__ == '__main__':
     dataset_option = in_arg.ds
     time_frame = in_arg.tf
     benf = in_arg.benf
+    test_ratio = in_arg.test_ratio
 
     if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
@@ -359,6 +386,6 @@ if __name__ == '__main__':
         URL = URL_DEATHS
         title_option = 'DEATHS'
      
-    print(benf)
+    
     dataset, population = get_and_cleandata(URL)
-    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf)
+    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, test_ratio, URL_TESTING)
