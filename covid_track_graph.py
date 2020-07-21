@@ -159,7 +159,7 @@ def benford(dataset):
 
     return digits_map  
 
-def calculate_active_cases(recovered_datase, accumulated_dataset, ):
+def calculate_active_cases(recovered_datase, accumulated_dataset):
     '''
     From the recoverd Dataset values and accumulated dataset this function calculate the active cases
       
@@ -175,23 +175,31 @@ def calculate_active_cases(recovered_datase, accumulated_dataset, ):
     
  
      
-def daily_test(URL, countries):
+def daily_test(URL, countries, dataset):
     '''
-    From the tests Dataset URL from the world of data (https://ourworldindata.org/coronavirus)
+    From the tests Dataset URL from the our world in data (https://ourworldindata.org/coronavirus)
       
     Args:
        
         URL : Git hub raw URL data
         countries : countries to read the tests covid data
+        dataset : dataset with the accumulated cases
        
     Returns:
-         test_dataset: dataset with the daily tests performed
+         test_dataset: dataset with the daily tests performed and merge with the accumulated cases
     '''   
 
     dataset = pd.read_csv(URL,index_col=0) 
-    tests = dataset[dataset.index.str.contains('Costa Rica')][['Date','Cumulative total','Daily change in cumulative total']]
-    dates = pd.to_datetime(tests.date.values)
-    tests.set_index(result,inplace=True)
+    daily_test_dataset = dataset[dataset.index.str.contains(countries[0])][['Date','Cumulative total','Daily change in cumulative total']]
+    dates = pd.to_datetime(daily_test_dataset.Date.values)
+    daily_test_dataset.set_index(dates,inplace=True)
+    daily_test_dataset.drop(['Date'], axis=1, inplace=True)
+
+    df=pd.concat([cr,dt],axis=1)
+    
+    return daily_test_dataset
+
+
 
 def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf):
     '''
@@ -213,8 +221,8 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     columnas = list(dataset.columns)
     dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
     
-    initial_day = dataset.columns [0]
-    last_day = dataset.columns [-1]
+    initial_day = dataset.columns[0]
+    last_day = dataset.columns[-1]
     dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
     if pop == 'y':
