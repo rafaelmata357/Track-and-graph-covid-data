@@ -327,11 +327,11 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
             test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
             
             if time_frame == 'weekly':
-                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests weekly {}'.format(countries), logy=False)
-
+                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests  {}'.format(countries), logy=False)
+                #test_ratio_df[['WHO Recommend tests ratio']].plot.bar(ax=axes[1])
                 axes[1].set_xlabel('Week',fontsize=8)
             else:
-                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs test Monthly {}'.format(countries), logy=False)
+                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests {}'.format(countries), logy=False)
                 axes[1].set_xlabel('Month',fontsize=8)
                 
         
