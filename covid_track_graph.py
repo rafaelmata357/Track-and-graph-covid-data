@@ -418,6 +418,12 @@ if __name__ == '__main__':
     
     print(countries)
      
-    
-    dataset, population = get_and_cleandata(URL)
+    if dataset_option != 'act':
+        dataset, population = get_and_cleandata(URL)
+    else:                                     
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
+        recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
+        dataset = calculate_active_cases(recovered_dataset, accumulated_dataset) # Calculate active cases
+        title_option = 'ACTIVE'
+
     graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, test_ratio, URL_TESTING)
