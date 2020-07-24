@@ -159,7 +159,7 @@ def benford(dataset):
 
     return digits_map  
 
-def calculate_active_cases(recovered_dataset, accumulated_dataset, ratio):
+def calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset):
     '''
     From the recoverd Dataset values and accumulated dataset this function calculate the active cases
       
@@ -171,15 +171,13 @@ def calculate_active_cases(recovered_dataset, accumulated_dataset, ratio):
     Returns:
          active_dataset: dataset with the active cases
     '''
-    active_cases_dataset = accumulated_dataset - recovered_dataset
+    active_cases_dataset = accumulated_dataset - recovered_dataset - death_dataset
 
-    if ratio == 'rec':
-        active_cases_dataset =  recovered_dataset/accumulated_dataset*100 #Calculate the percentage of recovery cases
-    else:
-        active_cases_dataset = accumulated_dataset - recovered_dataset #Calculate the number of active cases
+   
+    pct_recovered_dataset =  recovered_dataset/accumulated_dataset*100 #Calculate the percentage of recovery cases
+    
 
-
-    return active_cases_dataset
+    return active_cases_dataset, pct_recovered_dataset
     
  
      
@@ -223,15 +221,11 @@ def daily_test(URL, countries, daily_dataset, time_frame):
     daily_test_dataset.drop(['Date'], axis=1, inplace=True)
     daily_test_dataset.dropna(axis=0, inplace=True)
 
-    print(daily_dataset)
-    print('--------------------')
-    print(daily_test_dataset)
-    print('---------------------')
+  
 
     df = pd.concat([daily_dataset,daily_test_dataset],axis=1)
     df.dropna(axis=0, inplace=True)
-    print('---------------------')
-    print(df)
+  
     
     df['week'] = df.index.week
     df['month'] = df.index.month
@@ -248,7 +242,7 @@ def daily_test(URL, countries, daily_dataset, time_frame):
 
 
 
-def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
+def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -267,6 +261,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     
     columnas = list(dataset.columns)
     dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
+    pct_recovered.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
     
     initial_day = dataset.columns[0]
     last_day = dataset.columns[-1]
@@ -285,7 +280,11 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
           
     
-    if benf == 'n' and time_frame == 'daily':
+    
+    if ratio == 'rec' and time_frame == 'daily':
+        tograph = graphca
+        gtitle = 'Active Cases {}'.format(countries)
+    elif benf == 'n' and time_frame == 'daily':
         tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
         gtitle = 'Top {} countries'.format(top_n)
     else:
@@ -366,6 +365,8 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
             df.plot.bar(ax=axes[1],grid=True, title='Benford Law Analysis {}'.format(countries), logy=False)
             axes[1].set_xlabel('First Digits of the dataset',fontsize=8)
         else:
+            if ratio == 'rec':
+                graphca = pct_recovered.loc[countries]
             if scale == 'log':
             
                 graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
@@ -422,17 +423,20 @@ if __name__ == '__main__':
         URL = URL_DEATHS
         title_option = 'DEATHS'
     
-    print(countries)
-     
-    if dataset_option != 'act':
-        dataset, population = get_and_cleandata(URL)
-    else:                                     
-        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
-        recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
-        dataset = calculate_active_cases(recovered_dataset, accumulated_dataset, ratio) # Calculate active cases
-        if ratio == 'rec':
-            title_option = '%RECOVERED'
-        else:
-            title_option = 'ACTIVE'
+   
 
-    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL_TESTING)
+    
+                                       
+    accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
+    recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
+    death_dataset, population = get_and_cleandata(URL_DEATHS)
+    dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) # Calculate active cases
+    if ratio == 'rec':
+        title_option = '%RECOVERED'
+    else:
+        title_option = 'ACTIVE'
+    if dataset_option == 'acc':
+        dataset =  accumulated_dataset
+ 
+
+    graph(dataset, pct_recovered, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL_TESTING)
