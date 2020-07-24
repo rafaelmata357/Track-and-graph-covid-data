@@ -75,7 +75,7 @@ def get_args():
                     help = 'Apply Benford´s Law analysis') 
     
     # Argument 7: Test, Calculate positive covid cases ratio (cases/tests)
-    parser.add_argument('--ratio', type = str, default = 'rec', choices=['test', 'rec'],
+    parser.add_argument('--ratio', type = str, default = 'none', choices=['test', 'rec', 'none'],
                     help = 'Caclulate test ratio for positive cases vs tesr or recoverd cases vs positive cases')
     
    #wrapper_descriptor
