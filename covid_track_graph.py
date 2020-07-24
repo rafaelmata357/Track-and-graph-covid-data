@@ -159,7 +159,7 @@ def benford(dataset):
 
     return digits_map  
 
-def calculate_active_cases(recovered_datase, accumulated_dataset):
+def calculate_active_cases(recovered_dataset, accumulated_dataset):
     '''
     From the recoverd Dataset values and accumulated dataset this function calculate the active cases
       
@@ -171,7 +171,9 @@ def calculate_active_cases(recovered_datase, accumulated_dataset):
     Returns:
          active_dataset: dataset with the active cases
     '''
-    pass
+    active_cases_dataset = accumulated_dataset - recovered_dataset
+
+    return active_cases_dataset
     
  
      
