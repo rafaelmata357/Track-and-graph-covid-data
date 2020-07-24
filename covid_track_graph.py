@@ -159,7 +159,7 @@ def benford(dataset):
 
     return digits_map  
 
-def calculate_active_cases(recovered_dataset, accumulated_dataset):
+def calculate_active_cases(recovered_dataset, accumulated_dataset, ratio):
     '''
     From the recoverd Dataset values and accumulated dataset this function calculate the active cases
       
@@ -172,6 +172,12 @@ def calculate_active_cases(recovered_dataset, accumulated_dataset):
          active_dataset: dataset with the active cases
     '''
     active_cases_dataset = accumulated_dataset - recovered_dataset
+
+    if ratio == 'rec':
+        active_cases_dataset =  recovered_dataset/accumulated_dataset*100 #Calculate the percentage of recovery cases
+    else:
+        active_cases_dataset = accumulated_dataset - recovered_dataset #Calculate the number of active cases
+
 
     return active_cases_dataset
     
@@ -242,7 +248,7 @@ def daily_test(URL, countries, daily_dataset, time_frame):
 
 
 
-def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, test_ratio, URL):
+def graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -324,7 +330,7 @@ def graph(dataset, scale, top_n, countries, pop, population, title_option, time_
     if time_frame != 'daily': #Plot accumulated values weekly or monthly
         daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
         
-        if test_ratio == 'y':
+        if ratio == 'test':
             y_label = '%Positive Cases'
             test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
             
@@ -401,7 +407,7 @@ if __name__ == '__main__':
     dataset_option = in_arg.ds
     time_frame = in_arg.tf
     benf = in_arg.benf
-    test_ratio = in_arg.test_ratio
+    ratio = in_arg.ratio
 
     if countries == '': #If no countries specified assume all centroamerica countries and Mexico
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
@@ -423,7 +429,10 @@ if __name__ == '__main__':
     else:                                     
         accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
         recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
-        dataset = calculate_active_cases(recovered_dataset, accumulated_dataset) # Calculate active cases
-        title_option = 'ACTIVE'
+        dataset = calculate_active_cases(recovered_dataset, accumulated_dataset, ratio) # Calculate active cases
+        if ratio == 'rec':
+            title_option = '%RECOVERED'
+        else:
+            title_option = 'ACTIVE'
 
-    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, test_ratio, URL_TESTING)
+    graph(dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL_TESTING)
