@@ -254,9 +254,9 @@ def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, titl
          None  
     '''
 
-    months = mdates.MonthLocator()  # every month
-    mdays = mdates.DayLocator(interval=7)
-    months_fmt = mdates.DateFormatter('%b')
+    #months = mdates.MonthLocator()  # every month
+    #mdays = mdates.DayLocator(interval=7)
+    #months_fmt = mdates.DateFormatter('%b')
     
     
     columnas = list(dataset.columns)
@@ -396,7 +396,64 @@ def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, titl
     
     plt.show()
 
-def graph2(dataset, pct_recovered, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
+
+def columns_dataset_to_timestamp(dataset):
+    '''
+    From the Dataset this function take the columns in string format and conver to timestamp 
+    
+      
+    Args:
+        dataset : pandas datarframe dataset with string date format columns
+       
+    Returns:
+         datset: with columns in timestamp format
+    '''
+
+    columns = list(dataset.columns)
+    dataset.columns = pd.to_datetime(columns)
+
+    return dataset
+
+
+def graph_subplot(dataset, log, title, ytitle, xtitle, ax, bar):
+
+    '''
+    Fuction to graph a subplot 
+    Args:
+        dataset : pandas dataframe to plot
+        log:  boolena to plot logarithmic y scale
+        ytitle : String with y title
+        xtitle : String with x title
+        ax : axes subplot 
+        bar: boolean to plot a bar chart
+    
+    Returns:
+         None
+    '''
+   
+    if bar:
+        dataset.plot.bar(ax=ax, grid=True, log=log )
+    else:
+        dataset.plot.bar(ax=ax, grid=True, log=log )
+    
+    if log:
+        scale_log, logscale, max_value = get_log_scale(dataset)
+        plt.sca(ax)
+        plt.yticks(scale_log, logscale)
+
+    initial_day = dataset.columns[0]
+    last_day = dataset.columns[-1]
+    datemin = np.datetime64(initial_day, 'M')
+    datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
+    axes[0].set_xlim(datemin, datemax)
+    ax.set_title(title)
+    ax.set_ylabel(ytitle)
+    ax.set_xlabel(xtitle)
+    ax.grid(True, which='major')
+    ax.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+    
+
+def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -408,30 +465,35 @@ def graph2(dataset, pct_recovered, scale, top_n, countries, pop, population, tit
          None  
     '''
 
-    months = mdates.MonthLocator()  # every month
-    mdays = mdates.DayLocator(interval=7)
-    months_fmt = mdates.DateFormatter('%b')
+    #months = mdates.MonthLocator()  # every month
+    #mdays = mdates.DayLocator(interval=7)
+    #months_fmt = mdates.DateFormatter('%b')
     
     
-    columnas = list(dataset.columns)
-    dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
-    pct_recovered.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
+    active_dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) #Calculate active cases and %recovered cases
     
-    initial_day = dataset.columns[0]
-    last_day = dataset.columns[-1]
-    dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
+    #Change the columns format date to timestamp
+    accumulated.dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
+    recovered.dataset = columns_dataset_to_timestamp(recovered_dataset)        
+    death_dataset = columns_dataset_to_timestamp(recovered_dataset)            
+    active_dataset = columns_dataset_to_timestamp(active_dataset)              
+    pct_recovered = columns_dataset_to_timestamp(pct_recovered)                
     
-    if pop == 'y':
-        title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
-        dataset = cases_population_ratio(population, dataset)  # Calculate the cases/population ratio
-    else:
-        title = '2020 {} Covid Cases until {}'.format(title_option, last_day.strftime('%d/%m'))
-
-    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
+    initial_day = accumulated_dataset.columns[0]
+    last_day = accumulated_dataset.columns[-1]
+   
+    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(13,7))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=17, c='b')
 
-    graphca = dataset.loc[countries]  # Get  CA data to graph
-    graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
+    acc_rec_country[str(countries[0])+' Accumulated'] = accumulated_dataset.loc[countries].T  # Get the accumulated cases for the specific country
+    acc_rec_country[str(countries[0])+' Recovered'] = recovered_dataset.loc[countries].T      # Get the recovered cases for the specific country
+    #acc_rec_country.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
+
+    if pop == 'y':
+        title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
+        acc_rec_country = cases_population_ratio(population, acc_rec_country.T)  # Calculate the cases/population ratio
+    else:
+        title = '2020 {} Covid Cases until {}'.format(title_option, last_day.strftime('%d/%m'))
           
     
     
