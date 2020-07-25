@@ -451,6 +451,31 @@ def graph_subplot(dataset, log, title, ytitle, xtitle, ax, bar):
     ax.set_xlabel(xtitle)
     ax.grid(True, which='major')
     ax.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+    r = ax.get_xticklabels()
+    for i in r:
+        #i.set_rotation(75)
+        i.set_fontsize(10)
+
+def plot_benford(ax, dataset):
+    '''
+    From the Dataset this function graph the benford analysis
+      
+    Args:
+        ax: axes subplot
+        dataset: dataframe with the daily values
+       
+    Returns:
+         None  
+    '''
+
+    digits_map = benford(dataset)
+    y_label = '%Probability'
+    digits_values = np.array(list(digits_map.values()))
+    digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
+    df = pd.DataFrame({'P(D)':digits_values,'Benford´s Law':[30.1,17.6,12.5,9.7,7.9,6.7,5.8,5.1,4.6]},index=digits_map.keys())
+    df.plot.bar(ax=ax, grid=True,  title='Benford Law Analysis {}'.format(countries), logy=False)
+    ax.set_xlabel('First Digits of the dataset',fontsize=8)
+
     
 
 def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
@@ -479,8 +504,8 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     active_dataset = columns_dataset_to_timestamp(active_dataset)              
     pct_recovered = columns_dataset_to_timestamp(pct_recovered)                
     
-    initial_day = accumulated_dataset.columns[0]
-    last_day = accumulated_dataset.columns[-1]
+    #initial_day = accumulated_dataset.columns[0]
+    #last_day = accumulated_dataset.columns[-1]
    
     fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(13,7))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=17, c='b')
@@ -488,6 +513,9 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     acc_rec_country[str(countries[0])+' Accumulated'] = accumulated_dataset.loc[countries].T  # Get the accumulated cases for the specific country
     acc_rec_country[str(countries[0])+' Recovered'] = recovered_dataset.loc[countries].T      # Get the recovered cases for the specific country
     #acc_rec_country.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
+
+    daily_dataset = get_daily_values(accumulated_dataset.T)  # Calculate the daily values 
+    test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
 
     if pop == 'y':
         title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
@@ -519,10 +547,10 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
         tograph.T.plot(ax=axes[0],grid=True, title=gtitle, logy=False)  # Transpose and graph
         y_label = '#Cases Linear Scale'
     
-    axes[0].grid(True, which='major')
-    axes[0].grid(which='minor', color='k', linestyle=':', alpha=0.5)
-    axes[0].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset', fontsize= 5)
-    axes[0].set_ylabel(y_label)
+    #axes[0].grid(True, which='major')
+    #axes[0].grid(which='minor', color='k', linestyle=':', alpha=0.5)
+    #axes[0].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset', fontsize= 5)
+    #axes[0].set_ylabel(y_label)
     
     r = axes[0].get_xticklabels()
     for i in r:
@@ -536,9 +564,9 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
       
     # Set date min and date max for the x axis
   
-    datemin = np.datetime64(initial_day, 'M')
-    datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
-    axes[0].set_xlim(datemin, datemax)
+    #datemin = np.datetime64(initial_day, 'M')
+    #datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
+    #axes[0].set_xlim(datemin, datemax)
     
     
     
@@ -591,10 +619,11 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
             else:
                 graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
     
-            plt.xticks(fontsize=10)
-            plt.grid(True, which='major')
-            plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
-            axes[1].set_xlim(datemin, datemax) 
+            #plt.xticks(fontsize=10)
+            #plt.grid(True, which='major')
+            #plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+            #axes[1].set_xlim(datemin, datemax) 
+            
             if pop == 'y':
                 maxvalue_str = '{:.2f}'.format(max_value)
             else:
