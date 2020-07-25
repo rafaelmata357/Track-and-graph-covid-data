@@ -356,7 +356,8 @@ def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, titl
     else:
         scale_log, logscale, max_value = get_log_scale(graphca)
         if benf == 'y':    #Plot Benford analysis
-            digits_map = benford(graphca)
+            daily_dataset = get_daily_values(graphca.T) 
+            digits_map = benford(daily_dataset)
             y_label = '%Probability'
             
             digits_values = np.array(list(digits_map.values()))
@@ -440,6 +441,7 @@ def graph_subplot(dataset, log, title, ytitle, xtitle, ax, bar):
         scale_log, logscale, max_value = get_log_scale(dataset)
         plt.sca(ax)
         plt.yticks(scale_log, logscale)
+        y_label = '#Cases Log Scale'
 
     initial_day = dataset.columns[0]
     last_day = dataset.columns[-1]
@@ -490,32 +492,29 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
          None  
     '''
 
-    #months = mdates.MonthLocator()  # every month
-    #mdays = mdates.DayLocator(interval=7)
-    #months_fmt = mdates.DateFormatter('%b')
     
-    
-    active_dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) #Calculate active cases and %recovered cases
     
     #Change the columns format date to timestamp
     accumulated.dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
     recovered.dataset = columns_dataset_to_timestamp(recovered_dataset)        
-    death_dataset = columns_dataset_to_timestamp(recovered_dataset)            
-    active_dataset = columns_dataset_to_timestamp(active_dataset)              
-    pct_recovered = columns_dataset_to_timestamp(pct_recovered)                
+    death_dataset = columns_dataset_to_timestamp(recovered_dataset)
+
+    active_dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) #Calculate active cases and %recovered cases            
+    #active_dataset = columns_dataset_to_timestamp(active_dataset)              
+    #pct_recovered = columns_dataset_to_timestamp(pct_recovered)                
     
     #initial_day = accumulated_dataset.columns[0]
     #last_day = accumulated_dataset.columns[-1]
    
-    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(13,7))  #Generate subplots 3 x 2 
+    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,9))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=17, c='b')
 
     acc_rec_country[str(countries[0])+' Accumulated'] = accumulated_dataset.loc[countries].T  # Get the accumulated cases for the specific country
     acc_rec_country[str(countries[0])+' Recovered'] = recovered_dataset.loc[countries].T      # Get the recovered cases for the specific country
     #acc_rec_country.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
 
-    daily_dataset = get_daily_values(accumulated_dataset.T)  # Calculate the daily values 
-    test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
+    daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
+    test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)   # Calculate the positive/accumulate test ratio
 
     if pop == 'y':
         title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
@@ -618,11 +617,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
                 plt.yticks(scale_log, logscale)
             else:
                 graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
-    
-            #plt.xticks(fontsize=10)
-            #plt.grid(True, which='major')
-            #plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
-            #axes[1].set_xlim(datemin, datemax) 
+     
             
             if pop == 'y':
                 maxvalue_str = '{:.2f}'.format(max_value)
@@ -633,11 +628,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
    
 
     
-    axes[1].set_ylabel(y_label)
-
-    #axes[1].xaxis.set_major_locator(months)
-    #axes[1].xaxis.set_major_formatter(months_fmt)
-    #axes[1].xaxis.set_minor_locator(mdays)
+   
     
     plt.show()
 
