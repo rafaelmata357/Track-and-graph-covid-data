@@ -478,7 +478,17 @@ def plot_benford(ax, dataset):
     df.plot.bar(ax=ax, grid=True,  title='Benford Law Analysis {}'.format(countries), logy=False)
     ax.set_xlabel('First Digits of the dataset',fontsize=8)
 
-    
+def group_datasets(datasetA, datasetB):
+    '''
+    From two Dataset this function group both, and if have columns with the same name, add an additional id
+      
+    Args:
+        datasetA: data Frame
+        datasetB: data Frame
+       
+    Returns:
+         None  
+    '''   
 
 def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
     '''
@@ -495,11 +505,17 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     
     
     #Change the columns format date to timestamp
-    accumulated.dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
-    recovered.dataset = columns_dataset_to_timestamp(recovered_dataset)        
+    accumulated_dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
+    recovered_dataset = columns_dataset_to_timestamp(recovered_dataset)        
     death_dataset = columns_dataset_to_timestamp(recovered_dataset)
 
     active_dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) #Calculate active cases and %recovered cases            
+    daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
+    test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)   # Calculate the positive/accumulate test ratio
+
+    accumulated_dataset.name = 'Accum'  #Set the datasets names
+    recovered_dataset.name = 'Recov'
+    
     #active_dataset = columns_dataset_to_timestamp(active_dataset)              
     #pct_recovered = columns_dataset_to_timestamp(pct_recovered)                
     
@@ -513,8 +529,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     acc_rec_country[str(countries[0])+' Recovered'] = recovered_dataset.loc[countries].T      # Get the recovered cases for the specific country
     #acc_rec_country.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
 
-    daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
-    test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)   # Calculate the positive/accumulate test ratio
+    
 
     if pop == 'y':
         title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
