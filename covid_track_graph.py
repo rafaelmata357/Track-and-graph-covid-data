@@ -478,7 +478,18 @@ def plot_benford(ax, dataset):
     df.plot.bar(ax=ax, grid=True,  title='Benford Law Analysis {}'.format(countries), logy=False)
     ax.set_xlabel('First Digits of the dataset',fontsize=8)
 
-    
+def unify_datasets(datasetA, datasetB):
+    '''
+    From two datasets, unify both and add an id if the columns are the same
+      
+    Args:
+        datsetA: data Frame
+        datasetB: data Frame
+       
+    Returns:
+         unified_dataset: data Frame  
+    '''
+
 
 def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
     '''
@@ -509,9 +520,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,9))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=17, c='b')
 
-    acc_rec_country[str(countries[0])+' Accumulated'] = accumulated_dataset.loc[countries].T  # Get the accumulated cases for the specific country
-    acc_rec_country[str(countries[0])+' Recovered'] = recovered_dataset.loc[countries].T      # Get the recovered cases for the specific country
-    #acc_rec_country.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
+  
 
     daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
     test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)   # Calculate the positive/accumulate test ratio
