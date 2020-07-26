@@ -491,12 +491,9 @@ def unify_datasets(datasetA, datasetB):
     '''
 
     
-    last_day = datasetA.columns[-1]
-    datasetA.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
-
-    last_day = datasetB.columns[-1]
-    datasetB.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
+    datasetA = sort_dataset(datasetA)
+    datasetB = sort_dataset(datasetB)    
     columnsA = list(datasetA.T.columns)
     columnsB = list(datasetB.T.columns)
 
