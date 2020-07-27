@@ -159,7 +159,7 @@ def benford(dataset):
 
     return digits_map  
 
-def calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset):
+def calculate_active_cases(accumulated_dataset, recovered_dataset, death_dataset):
     '''
     From the recoverd Dataset values and accumulated dataset this function calculate the active cases
       
@@ -416,7 +416,7 @@ def columns_dataset_to_timestamp(dataset):
     return dataset
 
 
-def graph_subplot(dataset, log, title, ytitle, xtitle, ax, bar):
+def graph_subplot(dataset, log, title, ylabel, xlabel, ax, bar, tf):
 
     '''
     Fuction to graph a subplot 
@@ -431,32 +431,30 @@ def graph_subplot(dataset, log, title, ytitle, xtitle, ax, bar):
     Returns:
          None
     '''
-   
+
     if bar:
-        dataset.plot.bar(ax=ax, grid=True, log=log )
+        dataset.plot.bar(ax=ax, grid=True, logy=log )
     else:
-        dataset.plot.bar(ax=ax, grid=True, log=log )
+        dataset.plot(ax=ax, grid=True, logy=log )
     
     if log:
         scale_log, logscale, max_value = get_log_scale(dataset)
         plt.sca(ax)
         plt.yticks(scale_log, logscale)
-        y_label = '#Cases Log Scale'
-
-    initial_day = dataset.columns[0]
-    last_day = dataset.columns[-1]
-    datemin = np.datetime64(initial_day, 'M')
-    datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
-    axes[0].set_xlim(datemin, datemax)
-    ax.set_title(title)
-    ax.set_ylabel(ytitle)
-    ax.set_xlabel(xtitle)
+        ylabel = '#Cases Log Scale'
+    else:
+        ylabel = '#Cases Liner Scale'
+    
+    
+    ax.set_title(title, fontsize=9, fontweight='bold')
+    ax.set_ylabel(ylabel)
+    #ax.set_xlabel(xlabel)
     ax.grid(True, which='major')
-    ax.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+    #ax.grid(which='minor', color='k', linestyle=':', alpha=0.5)
     r = ax.get_xticklabels()
     for i in r:
         #i.set_rotation(75)
-        i.set_fontsize(10)
+        i.set_fontsize(6)
 
 def plot_benford(ax, dataset):
     '''
@@ -478,7 +476,7 @@ def plot_benford(ax, dataset):
     df.plot.bar(ax=ax, grid=True,  title='Benford Law Analysis {}'.format(countries), logy=False)
     ax.set_xlabel('First Digits of the dataset',fontsize=8)
 
-def unify_datasets(datasetA, datasetB):
+def unify_datasets(datasetA, datasetB, nameA, nameB):
     '''
     From two datasets, unify both and add an id if the columns are the same
       
@@ -489,23 +487,26 @@ def unify_datasets(datasetA, datasetB):
     Returns:
          unified_dataset: data Frame 
     '''
-
     
-    
-    datasetA = sort_dataset(datasetA)
-    datasetB = sort_dataset(datasetB)    
-    columnsA = list(datasetA.T.columns)
-    columnsB = list(datasetB.T.columns)
+    datasetA = datasetA.T
+    datasetB = datasetB.T
+    columnsA = list(datasetA.columns)
+    columnsB = list(datasetB.columns)
+   
 
     for i in range(len(columnsA)):
-        columnsA[i] = '{} {}'.format(columnsA[i],datasetA.name)
+        columnsA[i] = '{} {}'.format(columnsA[i], nameA)
     
     for i in range(len(columnsA)):
-        columnsB[i] = '{} {}'.format(columnsB[i],datasetB.name)
+        columnsB[i] = '{} {}'.format(columnsB[i], nameB)
+    
+    print(columnsA)
 
-    datasetA.T.columns = columnsA
-    datasetB.T.columns = columnsB
-    unified_dataset = pd.concat([datasetA.T, datasetB.T],axis=1)
+    datasetA.columns = columnsA
+    datasetB.columns = columnsB
+
+  
+    unified_dataset = pd.concat([datasetA, datasetB],axis=1)
 
     return unified_dataset
 
@@ -520,11 +521,11 @@ def sort_dataset(dataset):
     Returns:
         sort_dataset: data Frame 
     '''
-    last_day = datasetB.columns[-1]
+    last_day = dataset.columns[-1]
     dataset.sort_values(last_day, ascending=False, inplace=True)
-    return sort_dataset
+    return dataset
 
-def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
+def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -538,35 +539,30 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     #Change the columns format date to timestamp
     accumulated_dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
     recovered_dataset = columns_dataset_to_timestamp(recovered_dataset)        
-    death_dataset = columns_dataset_to_timestamp(recovered_dataset)
+    death_dataset = columns_dataset_to_timestamp(death_dataset)
 
+    active_dataset, pct_recovered = calculate_active_cases(accumulated_dataset, recovered_dataset, death_dataset) #Calculate active cases and %recovered cases            
+    daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
+    
     #Sort datasets using last day data as as key
-
     accumulated_dataset = sort_dataset(accumulated_dataset)
     recovered_dataset = sort_dataset(recovered_dataset)
     death_dataset = sort_dataset(death_dataset)
-
-    active_dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) #Calculate active cases and %recovered cases            
-    daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
     
     # Calculate the positive/accumulate test ratio
     test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame) 
 
-    accumulated_dataset.name = 'Acc'
-    recovered_dataset.name = 'Rec'
 
-    acc_rec_dataset = unify_datasets(accumulated_dataset, recovered_dataset)
+    acc_rec_dataset = unify_datasets(accumulated_dataset, recovered_dataset, 'Acc', 'Rec')
+  
 
-    acc_rec_country_pop = cases_population_ratio(population, acc_rec_dataset) 
+    acc_dataset_pop = cases_population_ratio(population, accumulated_dataset) 
 
+    
     top_n_countries = acc_rec_dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
 
-    test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests  {}'.format(countries), logy=False)
    
-    daily_dataset['week'] = daily_dataset.index.week
-    daily_dataset['month'] = daily_dataset.index.month
-    y_label = '#Cases Linear Scale'
 
     #if pop == 'y':
     #    pass #maxvalue_str = '{:.2f}'.format(max_value)
@@ -576,13 +572,35 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     #axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
 
     countries_str = ', '.join(countries)
-    title = '2020 {} Covid  Cases until {} for {}'.format(title_option, last_day.strftime('%d/%m'), countries_str)
+    last_day = accumulated_dataset.columns[-1]
+    title = '2020 Covid  Cases until {} for {}'.format(last_day.strftime('%d/%m'), countries_str)
     
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,9))  #Generate subplots 3 x 2 
-    fig.suptitle(title, fontsize=17, c='b')
+    fig.suptitle(title, fontsize=20, c='b')
 
-    
+    #test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests  {}'.format(countries), logy=False)
    
+    #daily_dataset['week'] = daily_dataset.index.week
+    #daily_dataset['month'] = daily_dataset.index.month
+    #y_label = '#Cases Linear Scale'
+    
+    if scale == 'log':
+        log = True
+    else:
+        log = False
+    
+    graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='Linear Scale', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
+    graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
+    graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='Linear Scale', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
+
+    #graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='Linear Scale', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
+    #graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
+    graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases normalized by population', ylabel='Linear Scale', xlabel='Months', ax=axes[2,1], bar=False, tf='daily')
+
+    #graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='Linear Scale', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
+    #graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
+    #graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='Linear Scale', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
+
     plt.show()
 
 #MAIN PROGRAM
@@ -593,39 +611,26 @@ if __name__ == '__main__':
     scale = in_arg.scale
     top_n = in_arg.top_n
     countries = in_arg.country
-    pop = in_arg.pop
-    dataset_option = in_arg.ds
     time_frame = in_arg.tf
-    benf = in_arg.benf
-    ratio = in_arg.ratio
+ 
 
-    if countries == '': #If no countries specified assume all centroamerica countries and Mexico
-        countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'Mexico','El Salvador','Nicaragua']
-    
-    if dataset_option == 'acc':
-        URL = URL_ACCUMULATED_CASES
-        title_option = 'ACCUMULATED'
-    elif dataset_option == 'rec':
-        URL = URL_RECOVERED
-        title_option = 'RECOVERED'
-    else:
-        URL = URL_DEATHS
-        title_option = 'DEATHS'
-    
-   
-
+    if countries == '': #If no countries specified assume all centroamerica countries 
+        countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'El Salvador','Nicaragua']
     
                                        
+    #Read and clean data from datasets github repositories
+    
     accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
     recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
     death_dataset, population = get_and_cleandata(URL_DEATHS)
-    dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) # Calculate active cases
-    if ratio == 'rec':
-        title_option = '%RECOVERED'
-    else:
-        title_option = 'ACTIVE'
-    if dataset_option == 'acc':
-        dataset =  accumulated_dataset
+
+    #Filter the countries to explore and analyze
+    if top_n == 0:
+        accumulated_dataset = accumulated_dataset.loc[countries]
+        recovered_dataset = recovered_dataset.loc[countries]
+        death_dataset = death_dataset.loc[countries]
+    
+    
  
 
-    graph(dataset, pct_recovered, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL_TESTING)
+    graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING)
