@@ -535,13 +535,16 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     Returns:
          None  
     '''
-
-    
-    
     #Change the columns format date to timestamp
     accumulated_dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
     recovered_dataset = columns_dataset_to_timestamp(recovered_dataset)        
     death_dataset = columns_dataset_to_timestamp(recovered_dataset)
+
+    #Sort datasets using last day data as as key
+
+    accumulated_dataset = sort_dataset(accumulated_dataset)
+    recovered_dataset = sort_dataset(recovered_dataset)
+    death_dataset = sort_dataset(death_dataset)
 
     active_dataset, pct_recovered = calculate_active_cases(recovered_dataset, accumulated_dataset, death_dataset) #Calculate active cases and %recovered cases            
     daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
@@ -556,7 +559,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
 
     acc_rec_country_pop = cases_population_ratio(population, acc_rec_dataset) 
 
-    tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+    top_n_countries = acc_rec_dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
 
     test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests  {}'.format(countries), logy=False)
@@ -571,11 +574,14 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     #    maxvalue_str = str(max_value)
     #plt.text(datemax,max_value, maxvalue_str) 
     #axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
+
+    countries_str = ', '.join(countries)
+    title = '2020 {} Covid  Cases until {} for {}'.format(title_option, last_day.strftime('%d/%m'), countries_str)
     
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,9))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=17, c='b')
 
-    title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
+    
    
     plt.show()
 
