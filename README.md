@@ -35,7 +35,7 @@ From terminal command line execute:
 
 Example:
 
-`$ python covid_track_graph.py --top_n 6 --scale log`
+`$ python covid_track_graph.py --top_n 6 --scale log --ds rec`
 
 In addition to get help execute:
 
