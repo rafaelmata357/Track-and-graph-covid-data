@@ -534,7 +534,7 @@ def sort_dataset(dataset):
     dataset.sort_values(last_day, ascending=False, inplace=True)
     return dataset
 
-def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL):
+def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL, aggregate):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -607,8 +607,15 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     else:
         tf = 'week'
     
-    daily_aggregate = daily_dataset.groupby(tf).sum()[countries]
-    active_daily_aggregate = active_daily_dataset.groupby(tf).sum()[countries]
+    if aggregate == 'sum':
+        daily_aggregate = daily_dataset.groupby(tf).sum()[countries]
+        active_daily_aggregate = active_daily_dataset.groupby(tf).sum()[countries]
+    elif aggregate == 'mean':
+        daily_aggregate = daily_dataset.groupby(tf).mean()[countries]
+        active_daily_aggregate = active_daily_dataset.groupby(tf).mean()[countries]
+    else:
+        daily_aggregate = daily_dataset.groupby(tf).max()[countries]
+        active_daily_aggregate = active_daily_dataset.groupby(tf).max()[countries]
     
     graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
     graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
@@ -636,6 +643,7 @@ if __name__ == '__main__':
     top_n = in_arg.top_n
     countries = in_arg.country
     time_frame = in_arg.tf
+    aggregate = in_arg.agg
  
 
     if countries == '': #If no countries specified assume all centroamerica countries 
@@ -657,4 +665,4 @@ if __name__ == '__main__':
     
  
 
-    graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING)
+    graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING, aggregate)
