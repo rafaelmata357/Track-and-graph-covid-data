@@ -59,24 +59,12 @@ def get_args():
                     help = 'Country list') 
     
     # Argument 4: Active cases / Population Ration
-    parser.add_argument('--pop', type = str, default = 'n', choices=['y', 'n'],
+    parser.add_argument('--agg', type = str, default = 'sum', choices=['sum', 'max', 'mean'],
                     help = 'Plot the cases/population')  
     
-     # Argument 5: Dataset to plot Accumulated, Recovered, Deaths cases
-    parser.add_argument('--ds', type = str, default = 'acc', choices=['acc', 'rec', 'death','act'],
-                    help = 'Dataset to plot') 
-
-     # Argument 6: Time Frame
+    # Argument 5: Time Frame
     parser.add_argument('--tf', type = str, default = 'daily', choices=['daily', 'weekly', 'monthly'],
                     help = 'Time frame to plot the data') 
-    
-    # Argument 6: Apply Benford´s Law analysis
-    parser.add_argument('--benf', type = str, default = 'n', choices=['y', 'n'],
-                    help = 'Apply Benford´s Law analysis') 
-    
-    # Argument 7: Test, Calculate positive covid cases ratio (cases/tests)
-    parser.add_argument('--ratio', type = str, default = 'none', choices=['test', 'rec', 'none'],
-                    help = 'Caclulate test ratio for positive cases vs tesr or recoverd cases vs positive cases')
     
    #wrapper_descriptor
 
