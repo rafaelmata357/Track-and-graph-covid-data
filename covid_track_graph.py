@@ -443,7 +443,8 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, bar, tf):
         plt.yticks(scale_log, logscale)
         ylabel = '#Cases Log Scale'
     else:
-        ylabel = '#Cases Liner Scale'
+        if ylabel== '':
+            ylabel = '#Cases Liner Scale'
     
     
     ax.set_title(title, fontsize=9, fontweight='bold')
@@ -575,7 +576,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     last_day = accumulated_dataset.columns[-1]
     title = '2020 Covid  Cases until {} for {}'.format(last_day.strftime('%d/%m'), countries_str)
     
-    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,9))  #Generate subplots 3 x 2 
+    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,10))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=20, c='b')
 
     #test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests  {}'.format(countries), logy=False)
@@ -589,13 +590,13 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     else:
         log = False
     
-    graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='Linear Scale', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
-    graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
-    graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='Linear Scale', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
+    graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
+    graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
+    graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
 
     #graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='Linear Scale', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
-    #graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
-    graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases normalized by population', ylabel='Linear Scale', xlabel='Months', ax=axes[2,1], bar=False, tf='daily')
+    graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='Months', ax=axes[1,1], bar=False, tf='daily')
+    graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='Months', ax=axes[2,1], bar=False, tf='daily')
 
     #graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='Linear Scale', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
     #graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
