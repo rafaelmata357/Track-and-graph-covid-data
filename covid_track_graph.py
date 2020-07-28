@@ -476,8 +476,14 @@ def plot_benford(ax, dataset):
     digits_values = np.array(list(digits_map.values()))
     digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
     df = pd.DataFrame({'P(D)':digits_values,'Benford´s Law':[30.1,17.6,12.5,9.7,7.9,6.7,5.8,5.1,4.6]},index=digits_map.keys())
-    df.plot.bar(ax=ax, grid=True,  title='Benford Law Analysis {}'.format(countries), logy=False)
-    ax.set_xlabel('First Digits of the dataset',fontsize=8)
+    df.plot.bar(ax=ax, grid=True, logy=False, fontsize=8)
+    ax.set_xlabel('First Digits of the dataset',fontsize=6)
+    title='Benford Law Analysis {}'
+    ax.set_title(title, fontsize=9, fontweight='bold')
+    r = ax.get_xticklabels()
+    for i in r:
+        #i.set_rotation(75)
+        i.set_fontsize(6)
 
 def unify_datasets(datasetA, datasetB, nameA, nameB):
     '''
@@ -614,7 +620,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
 
     graph_subplot(dataset=daily_aggregate, log=False, title='Accumulared {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[0,2], bar=True, tf=tf)
     graph_subplot(dataset=active_daily_aggregate, log=False, title='Active {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[1,2], bar=True, tf=tf)
-    
+    plot_benford(ax=axes[2,2], dataset=daily_dataset)
 
 
     plt.show()
