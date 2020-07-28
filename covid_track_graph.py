@@ -581,9 +581,13 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,10))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=20, c='b')
 
-    
+    active_daily_dataset = get_daily_values(active_dataset.T)
     daily_dataset['week'] = daily_dataset.index.week
     daily_dataset['month'] = daily_dataset.index.month
+
+    active_daily_dataset['week'] = active_daily_dataset.index.week
+    active_daily_dataset['month'] = active_daily_dataset.index.month
+    
 
     
     if scale == 'log':
@@ -598,6 +602,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
         tf = 'week'
     
     daily_aggregate = daily_dataset.groupby(tf).sum()[countries]
+    active_daily_aggregate = active_daily_dataset.groupby(tf).sum()[countries]
     
     graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
     graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
@@ -607,9 +612,10 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='Months', ax=axes[1,1], bar=False, tf='daily')
     graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='Months', ax=axes[2,1], bar=False, tf='daily')
 
-    graph_subplot(dataset=daily_aggregate, log=False, title='Accumulared {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='Months', ax=axes[0,2], bar=True, tf=tf)
-    #graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='Linear Scale', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
-    #graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='Linear Scale', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
+    graph_subplot(dataset=daily_aggregate, log=False, title='Accumulared {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[0,2], bar=True, tf=tf)
+    graph_subplot(dataset=active_daily_aggregate, log=False, title='Active {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[1,2], bar=True, tf=tf)
+    
+
 
     plt.show()
 
