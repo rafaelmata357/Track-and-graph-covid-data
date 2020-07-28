@@ -558,22 +558,22 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     recovered_dataset = sort_dataset(recovered_dataset)
     death_dataset = sort_dataset(death_dataset)
     
-    # Calculate the positive/accumulate test ratio
-    test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame) 
+    # Calculate the positive/accumulate test ratio if there is data
+    try:
+        test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame) 
+        test_data = True
+    except:
+        test_data = False
+    
 
 
     acc_rec_dataset = unify_datasets(accumulated_dataset, recovered_dataset, 'Acc', 'Rec')
   
-
     acc_dataset_pop = cases_population_ratio(population, accumulated_dataset) 
-
     
     top_n_countries = acc_rec_dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
 
-   
-
-    #if pop == 'y':
     #    pass #maxvalue_str = '{:.2f}'.format(max_value)
     #else:
     #    maxvalue_str = str(max_value)
@@ -614,7 +614,9 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
     graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
 
-    graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend tests ratio']], log=False, title='%Test to posiive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+    if test_data:
+        graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend tests ratio']], log=False, title='%Test to posiive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+    
     graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='Months', ax=axes[1,1], bar=False, tf='daily')
     graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='Months', ax=axes[2,1], bar=False, tf='daily')
 
