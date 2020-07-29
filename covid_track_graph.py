@@ -49,8 +49,10 @@ def get_and_cleandata(URL):
      dataset  : a pandas DF with the comple covid dataset  
      population: dataset with the population per country 
     '''
-
+    url_split = URL.split('/')
+    print('Reading dataset {}'.format(url_split[-1]))
     dataset = pd.read_csv(URL,index_col=0)  #Se lee los datos de github en formato .csv
+ 
     columna = dataset.columns
     dataset.set_index(columna[0], inplace=True)  # Para regenerar el indice por pais
     dataset.drop(['Lat', 'Long'], axis=1, inplace=True)  # Para eliminar las colunnas de Lat y Long
