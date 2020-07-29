@@ -586,6 +586,7 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(16,10))  #Generate subplots 3 x 2 
     fig.suptitle(title, fontsize=20, c='b')
+    #fig.suptitle('Source Data: JHU CSSE COVID-19 Dataset',x=1, y=15, ha='left', fontsize=10, c='b')
 
     active_daily_dataset = get_daily_values(active_dataset.T)
     daily_dataset['week'] = daily_dataset.index.week
