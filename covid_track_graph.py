@@ -60,6 +60,7 @@ def get_and_cleandata(URL):
 
     population = pd.read_excel('population.xlsx', 'data', index_col=0, na_values=['NA'])
     subadata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
+    subadata =  columns_dataset_to_timestamp(subadata)
     
     return subadata, population
 
@@ -262,8 +263,8 @@ def graph(dataset, scale, top_n, countries,  title_option):
     
     
     columnas = list(dataset.columns)
-    dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
-   
+    #dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
+ 
     
     initial_day = dataset.columns[0]
     last_day = dataset.columns[-1]
@@ -488,9 +489,9 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
          None  
     '''
     #Change the columns format date to timestamp
-    accumulated_dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
-    recovered_dataset = columns_dataset_to_timestamp(recovered_dataset)        
-    death_dataset = columns_dataset_to_timestamp(death_dataset)
+    #accumulated_dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
+    #recovered_dataset = columns_dataset_to_timestamp(recovered_dataset)        
+    #death_dataset = columns_dataset_to_timestamp(death_dataset)
 
     active_dataset, pct_recovered = calculate_active_cases(accumulated_dataset, recovered_dataset, death_dataset) #Calculate active cases and %recovered cases            
     daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
