@@ -70,6 +70,11 @@ def get_args():
     parser.add_argument('--dash', type = str, default = 'daily', choices=['y', 'n'],
                     help = 'Display a dashboard with different datasets and analysis') 
     
+    # Argument 7: Start date for the dataset
+    parser.add_argument('--start', type = str, default = '2020/01/22',
+                    help = 'Start date of the dataset to plot the data')
+
+    
    #wrapper_descriptor
 
     return parser.parse_args()
