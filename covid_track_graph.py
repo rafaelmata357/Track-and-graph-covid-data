@@ -282,14 +282,14 @@ def graph(dataset, scale, top_n, countries,  title_option):
     
     
     if scale == 'log':
-        tograph.T.plot(ax=axes[0],grid=True, title=gtitle,logy=True)  # Transpose and graph
+        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n),logy=True)  # Transpose and graph
         scale_log, logscale, max_value = get_log_scale(tograph)
         plt.sca(axes[0])
         plt.yticks(scale_log, logscale)
         #axes[0].set_yticks(scale_log)
         y_label = '#Cases Log Scale'
     else:
-        tograph.T.plot(ax=axes[0],grid=True, title=gtitle, logy=False)  # Transpose and graph
+        tograph.T.plot(ax=axes[0],grid=True, title='Top {} countries'.format(top_n), logy=False)  # Transpose and graph
         y_label = '#Cases Linear Scale'
     
     axes[0].grid(True, which='major')
@@ -327,10 +327,8 @@ def graph(dataset, scale, top_n, countries,  title_option):
     plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
     axes[1].set_xlim(datemin, datemax) 
             
-    if pop == 'y':
-        maxvalue_str = '{:.2f}'.format(max_value)
-    else:
-        maxvalue_str = str(max_value)
+  
+    maxvalue_str = str(max_value)
             
     plt.text(datemax,max_value, maxvalue_str) 
     axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
