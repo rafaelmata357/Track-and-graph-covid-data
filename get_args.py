@@ -71,8 +71,8 @@ def get_args():
                     help = 'Display a dashboard with different datasets and analysis') 
     
     # Argument 7: Start date for the dataset
-    parser.add_argument('--start', type = str, default = '2020/01/22',
-                    help = 'Start date of the dataset to plot the data')
+    parser.add_argument('--start', type = str, default = '2020-01-22',
+                    help = 'Start date format YYYY-mm-dd of the dataset to plot the data')
 
     
    #wrapper_descriptor
