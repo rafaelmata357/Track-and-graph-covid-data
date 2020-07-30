@@ -238,7 +238,7 @@ def daily_test(URL, countries, daily_dataset, time_frame):
     else:
         df2 = df.groupby('month').sum()[[countries[0],'Daily change in cumulative total']]
         df2['Positive Cases'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
-    df2['WHO Recommend tests ratio'] = 10  #Set the WHO reccomended test/cases ratio 10% 
+    df2['WHO Recommend value'] = 10  #Set the WHO reccomended test/cases ratio 10% 
     
     return df2
 
@@ -480,7 +480,7 @@ def plot_benford(ax, dataset):
     df = pd.DataFrame({'P(D)':digits_values,'Benford´s Law':[30.1,17.6,12.5,9.7,7.9,6.7,5.8,5.1,4.6]},index=digits_map.keys())
     df.plot.bar(ax=ax, grid=True, logy=False, fontsize=8)
     ax.set_xlabel('First Digits of the dataset',fontsize=6)
-    title='Benford Law Analysis {}'
+    title='Benford Law Analysis'
     ax.set_title(title, fontsize=9, fontweight='bold')
     r = ax.get_xticklabels()
     for i in r:
@@ -620,17 +620,17 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
         daily_aggregate = daily_dataset.groupby(tf).max()[countries]
         active_daily_aggregate = active_daily_dataset.groupby(tf).max()[countries]
     
-    graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulared and Recovered cases', ylabel='', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
+    graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel='', xlabel='Months', ax=axes[0,0], bar=False, tf='daily')
     graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel='', xlabel='Months', ax=axes[1,0], bar=False, tf='daily')
     graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel='', xlabel='Months', ax=axes[2,0], bar=False, tf='daily')
 
     if test_data:
-        graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend tests ratio']], log=False, title='%Test to posiive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+        graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,1], bar=True, tf=tf)
     
     graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='Months', ax=axes[1,1], bar=False, tf='daily')
     graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='Months', ax=axes[2,1], bar=False, tf='daily')
 
-    graph_subplot(dataset=daily_aggregate, log=False, title='Accumulared {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[0,2], bar=True, tf=tf)
+    graph_subplot(dataset=daily_aggregate, log=False, title='Accumulated {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[0,2], bar=True, tf=tf)
     graph_subplot(dataset=active_daily_aggregate, log=False, title='Active {}tly cases'.format(tf), ylabel='Linear Scale', xlabel='', ax=axes[1,2], bar=True, tf=tf)
     plot_benford(ax=axes[2,2], dataset=daily_dataset)
 
