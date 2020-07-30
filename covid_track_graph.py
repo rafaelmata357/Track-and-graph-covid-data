@@ -244,7 +244,7 @@ def daily_test(URL, countries, daily_dataset, time_frame):
 
 
 
-def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, title_option, time_frame, benf, ratio, URL):
+def graph(dataset, scale, top_n, countries,  title_option):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -263,35 +263,22 @@ def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, titl
     
     columnas = list(dataset.columns)
     dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
-    pct_recovered.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
+   
     
     initial_day = dataset.columns[0]
     last_day = dataset.columns[-1]
     dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
-    if pop == 'y':
-        title = '2020 {} Covid  Cases until {} per 1M Population'.format(title_option, last_day.strftime('%d/%m'))
-        dataset = cases_population_ratio(population, dataset)  # Calculate the cases/population ratio
-    else:
-        title = '2020 {} Covid Cases until {}'.format(title_option, last_day.strftime('%d/%m'))
+  
+    title = '2020 {} Covid Cases until {}'.format(title_option, last_day.strftime('%d/%m'))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
 
     graphca = dataset.loc[countries]  # Get  CA data to graph
     graphca.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the total cases 
-          
-    
-    
-    if ratio == 'rec' and time_frame == 'daily':
-        tograph = graphca
-        gtitle = 'Active Cases {}'.format(countries)
-    elif benf == 'n' and time_frame == 'daily':
-        tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
-        gtitle = 'Top {} countries'.format(top_n)
-    else:
-        tograph = graphca
-        gtitle = '{} countries'.format(countries)
+    tograph = dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
+
     
     
     if scale == 'log':
@@ -326,68 +313,27 @@ def graph(dataset, pct_recovered, scale, top_n, countries, pop, population, titl
     datemax = np.datetime64(last_day, 'M') + np.timedelta64(1, 'M')
     axes[0].set_xlim(datemin, datemax)
     
-    
-    
-    if time_frame != 'daily': #Plot accumulated values weekly or monthly
-        daily_dataset = get_daily_values(graphca.T)   #Calculate the daily values
-        
-        if ratio == 'test':
-            y_label = '%Positive Cases'
-            test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame)
-            
-            if time_frame == 'weekly':
-                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests  {}'.format(countries), logy=False)
-                #test_ratio_df[['WHO Recommend tests ratio']].plot.bar(ax=axes[1])
-                axes[1].set_xlabel('Week',fontsize=8)
-            else:
-                test_ratio_df[['Positive Cases','WHO Recommend tests ratio']].plot.bar(ax=axes[1],grid=True, title='%Positive cases vs tests {}'.format(countries), logy=False)
-                axes[1].set_xlabel('Month',fontsize=8)
-                
-        
-        else:
-            daily_dataset['week'] = daily_dataset.index.week
-            daily_dataset['month'] = daily_dataset.index.month
-            y_label = '#Cases Linear Scale'
-        
-            if time_frame == 'weekly':
-                daily_dataset.groupby('week').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Weekly accumuled values', logy=False)  # Plot the transpose data
-                axes[1].set_xlabel('Week',fontsize=8)
-            elif time_frame == 'monthly':
-                daily_dataset.groupby('month').sum()[countries].plot.bar(ax=axes[1],grid=True, title='Monthly accumulated values', logy=False)  # Plot the transpose data
-                axes[1].set_xlabel('Month',fontsize=8)
+    scale_log, logscale, max_value = get_log_scale(graphca)
+  
+    if scale == 'log':
+        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
+        plt.sca(axes[1])
+        plt.yticks(scale_log, logscale)
     else:
-        scale_log, logscale, max_value = get_log_scale(graphca)
-        if benf == 'y':    #Plot Benford analysis
-            daily_dataset = get_daily_values(graphca.T) 
-            digits_map = benford(daily_dataset)
-            y_label = '%Probability'
-            
-            digits_values = np.array(list(digits_map.values()))
-            digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
-            df = pd.DataFrame({'P(D)':digits_values,'Benford´s Law':[30.1,17.6,12.5,9.7,7.9,6.7,5.8,5.1,4.6]},index=digits_map.keys())
-            df.plot.bar(ax=axes[1],grid=True, title='Benford Law Analysis {}'.format(countries), logy=False)
-            axes[1].set_xlabel('First Digits of the dataset',fontsize=8)
-        else:
-            if ratio == 'rec':
-                graphca = pct_recovered.loc[countries]
-            if scale == 'log':
-            
-                graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
-                plt.sca(axes[1])
-                plt.yticks(scale_log, logscale)
-            else:
-                graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
     
-            plt.xticks(fontsize=10)
-            plt.grid(True, which='major')
-            plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
-            axes[1].set_xlim(datemin, datemax) 
-            if pop == 'y':
-                maxvalue_str = '{:.2f}'.format(max_value)
-            else:
-                maxvalue_str = str(max_value)
-            plt.text(datemax,max_value, maxvalue_str) 
-            axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
+    plt.xticks(fontsize=10)
+    plt.grid(True, which='major')
+    plt.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+    axes[1].set_xlim(datemin, datemax) 
+            
+    if pop == 'y':
+        maxvalue_str = '{:.2f}'.format(max_value)
+    else:
+        maxvalue_str = str(max_value)
+            
+    plt.text(datemax,max_value, maxvalue_str) 
+    axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
    
 
     
