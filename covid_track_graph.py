@@ -66,7 +66,7 @@ def get_and_cleandata(URL, start_date):
     start_date_obj = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     #Filter the dataset using the start date selected
 
-    subdata = subadta.loc[:,start_date_obj:]
+    subdata = subdata.loc[:,start_date_obj:]
     
     return subdata, population
 
