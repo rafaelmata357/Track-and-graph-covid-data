@@ -47,7 +47,7 @@ def get_args():
     
        
     # Argument 1: Number of countries to display 
-    parser.add_argument('--top_n', type = int, default= 0,
+    parser.add_argument('--top_n', type = int, default= 5,
                     help = 'Top n countries to display')  
     
     # Argument 2: Y axis scale to use
