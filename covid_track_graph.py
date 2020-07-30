@@ -593,25 +593,23 @@ if __name__ == '__main__':
     countries = in_arg.country
     time_frame = in_arg.tf
     aggregate = in_arg.agg
+    dash = in_arg.dash
  
 
     if countries == '': #If no countries specified assume all centroamerica countries 
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'El Salvador','Nicaragua']
     
-                                       
-    #Read and clean data from datasets github repositories
-    
-    accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
-    recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
-    death_dataset, population = get_and_cleandata(URL_DEATHS)
+    if dash == 'y':
+        #Read and clean data from datasets github repositories
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
+        recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
+        death_dataset, population = get_and_cleandata(URL_DEATHS)
 
-    #Filter the countries to explore and analyze
-    if top_n == 0:
+         #Filter the countries to explore and analyze
         accumulated_dataset = accumulated_dataset.loc[countries]
         recovered_dataset = recovered_dataset.loc[countries]
         death_dataset = death_dataset.loc[countries]
-    
-    
- 
-
-    graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING, aggregate)
+        graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING, aggregate)
+    else:
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
+        graph(accumulated_dataset, scale, top_n, countries,  'Accumulated')
