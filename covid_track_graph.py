@@ -24,6 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import math
+import datetime
 
 # Imports functions created for this program
 from get_args import get_args
@@ -35,7 +36,7 @@ URL_RECOVERED = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/maste
 URL_DEATHS = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
 URL_TESTING ='https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv'
 
-def get_and_cleandata(URL):
+def get_and_cleandata(URL, start_date):
 
     '''
     Download the data from the JHU github repository and prepare the data to graph
@@ -59,10 +60,15 @@ def get_and_cleandata(URL):
 
 
     population = pd.read_excel('population.xlsx', 'data', index_col=0, na_values=['NA'])
-    subadata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
-    subadata =  columns_dataset_to_timestamp(subadata)
+    subdata = dataset.groupby('Country/Region', axis=0).sum()        #Sum the daily data by country
+    subdata =  columns_dataset_to_timestamp(subdata) #Change the columns format date to timestamp
+
+    start_date_obj = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    #Filter the dataset using the start date selected
+
+    subdata = subadta.loc[:,start_date_obj:]
     
-    return subadata, population
+    return subdata, population
 
 
 
@@ -488,10 +494,8 @@ def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, 
     Returns:
          None  
     '''
-    #Change the columns format date to timestamp
-    #accumulated_dataset =  columns_dataset_to_timestamp(accumulated_dataset)   
-    #recovered_dataset = columns_dataset_to_timestamp(recovered_dataset)        
-    #death_dataset = columns_dataset_to_timestamp(death_dataset)
+    
+
 
     active_dataset, pct_recovered = calculate_active_cases(accumulated_dataset, recovered_dataset, death_dataset) #Calculate active cases and %recovered cases            
     daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
@@ -593,6 +597,7 @@ if __name__ == '__main__':
     time_frame = in_arg.tf
     aggregate = in_arg.agg
     dash = in_arg.dash
+    start_date = in_arg.start
  
 
     if countries == '': #If no countries specified assume all centroamerica countries 
@@ -600,9 +605,9 @@ if __name__ == '__main__':
     
     if dash == 'y':
         #Read and clean data from datasets github repositories
-        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
-        recovered_dataset, population = get_and_cleandata(URL_RECOVERED)
-        death_dataset, population = get_and_cleandata(URL_DEATHS)
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
+        recovered_dataset, population = get_and_cleandata(URL_RECOVERED, start_date)
+        death_dataset, population = get_and_cleandata(URL_DEATHS, start_date)
 
          #Filter the countries to explore and analyze
         accumulated_dataset = accumulated_dataset.loc[countries]
@@ -610,5 +615,5 @@ if __name__ == '__main__':
         death_dataset = death_dataset.loc[countries]
         graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING, aggregate)
     else:
-        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES)
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
         graph(accumulated_dataset, scale, top_n, countries,  'Accumulated')
