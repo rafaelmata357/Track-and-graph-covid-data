@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  29 july 2020
+# REVISED DATE :  30 july 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -483,13 +483,21 @@ def sort_dataset(dataset):
     dataset.sort_values(last_day, ascending=False, inplace=True)
     return dataset
 
-def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL, aggregate):
+def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL, aggregate):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
       
     Args:
         URL : url to the github raw data from JHU updated daily
+        accumulate_dataset: data frame with confirmed acculated cases
+        recovered_dataset: data frame with recovered cases
+        death_dataset: data frame with deats cases
+        scale: string y or n
+        countries: list with country
+        time_frame: string daily, weekly, monthly
+        aggregate: string aggregate sum, mean, max
+        
        
     Returns:
          None  
@@ -613,7 +621,7 @@ if __name__ == '__main__':
         accumulated_dataset = accumulated_dataset.loc[countries]
         recovered_dataset = recovered_dataset.loc[countries]
         death_dataset = death_dataset.loc[countries]
-        graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, top_n, countries, population, time_frame, URL_TESTING, aggregate)
+        graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING, aggregate)
     else:
         accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
         graph(accumulated_dataset, scale, top_n, countries,  'Accumulated')
