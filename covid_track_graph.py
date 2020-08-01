@@ -68,6 +68,9 @@ def get_and_cleandata(URL, start_date):
 
     subdata = subdata.loc[:,start_date_obj:]
     
+    #Sort datasets using last day data as as key
+    subdata = sort_dataset(subdata)
+    
     return subdata, population
 
 
@@ -407,6 +410,44 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, bar, tf):
         #i.set_rotation(75)
         i.set_fontsize(6)
 
+def graph_subplot2(dataset, log, title, ylabel, xlabel, ax, bar, tf):
+
+    '''
+    Fuction to graph a subplot from a dataframe and combine with bar and line
+    Args:
+        dataset : pandas dataframe to plot
+        log:  boolena to plot logarithmic y scale
+        ytitle : String with y title
+        xtitle : String with x title
+        ax : axes subplot 
+        bar: boolean to plot a bar chart
+    
+    Returns:
+         None
+    '''
+
+    if bar:
+        dataset.plot.bar(ax=ax, grid=True, logy=log )
+    else:
+        dataset.plot(ax=ax, grid=True, logy=log )
+    
+    if log:
+        scale_log, logscale, max_value = get_log_scale(dataset)
+        plt.sca(ax)
+        plt.yticks(scale_log, logscale)
+      
+    ax.set_title(title, fontsize=9, fontweight='bold')
+    ax.set_ylabel(ylabel)
+    #if tf != 'daily':
+    ax.set_xlabel(xlabel)
+
+    ax.grid(True, which='major')
+    #ax.grid(which='minor', color='k', linestyle=':', alpha=0.5)
+    r = ax.get_xticklabels()
+    for i in r:
+        #i.set_rotation(75)
+        i.set_fontsize(6)
+
 def plot_benford(ax, dataset):
     '''
     From the Dataset this function graph the benford analysis
@@ -503,16 +544,9 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
          None  
     '''
     
-
-
     active_dataset, pct_recovered = calculate_active_cases(accumulated_dataset, recovered_dataset, death_dataset) #Calculate active cases and %recovered cases            
     daily_dataset = get_daily_values(accumulated_dataset.T)                 # Calculate the daily values 
-    
-    #Sort datasets using last day data as as key
-    accumulated_dataset = sort_dataset(accumulated_dataset)
-    recovered_dataset = sort_dataset(recovered_dataset)
-    death_dataset = sort_dataset(death_dataset)
-    
+     
     # Calculate the positive/accumulate test ratio if there is data
     try:
         test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame) 
@@ -520,8 +554,6 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     except:
         test_data = False
     
-
-
     acc_rec_dataset = unify_datasets(accumulated_dataset, recovered_dataset, 'Acc', 'Rec')
   
     acc_dataset_pop = cases_population_ratio(population, accumulated_dataset) 
@@ -580,6 +612,10 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
 
     graph_subplot(dataset=daily_aggregate, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+    daily_aggregate = daily_dataset.groupby(tf).mean()[countries]
+    graph_subplot(dataset=daily_aggregate, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=False, tf=tf)
+
+
     graph_subplot(dataset=active_daily_aggregate, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
     graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
 
