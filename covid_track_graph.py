@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  30 july 2020
+# REVISED DATE :  31 july 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -251,7 +251,7 @@ def daily_test(URL, countries, daily_dataset, time_frame):
 
 
 
-def graph(dataset, scale, top_n, countries,  title_option):
+def dashboard_1(dataset, scale, top_n, countries,  title_option):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -483,7 +483,7 @@ def sort_dataset(dataset):
     dataset.sort_values(last_day, ascending=False, inplace=True)
     return dataset
 
-def graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL, aggregate):
+def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL, aggregate):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -621,7 +621,7 @@ if __name__ == '__main__':
         accumulated_dataset = accumulated_dataset.loc[countries]
         recovered_dataset = recovered_dataset.loc[countries]
         death_dataset = death_dataset.loc[countries]
-        graph2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING, aggregate)
+        dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING, aggregate)
     else:
         accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
-        graph(accumulated_dataset, scale, top_n, countries,  'Accumulated')
+        dashboard_1(accumulated_dataset, scale, top_n, countries,  'Accumulated')
