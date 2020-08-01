@@ -425,11 +425,23 @@ def graph_subplot2(dataset, log, title, ylabel, xlabel, ax, bar, tf):
     Returns:
          None
     '''
-
-    if bar:
-        dataset.plot.bar(ax=ax, grid=True, logy=log )
+    if log:
+        scale = 'log'
     else:
-        dataset.plot(ax=ax, grid=True, logy=log )
+        scale='linear'
+   
+    daily_aggregate = dataset.groupby(tf).sum()
+    daily_average = dataset.groupby(tf).mean()
+    daily_max = dataset.groupby(tf).max()
+    
+    ax2 = daily_aggregate.iloc[:,0].plot(ax=ax,grid=True, legend=True, label='Accumulated', logy=log, kind='bar')
+    #daily_average.iloc[:,0].plot(ax=ax,grid=True, color='blue', label='Average',legend=True, lw=2, logy=log)
+    ax.plot(ax2.get_xticks(),daily_max.iloc[:,0].values, color='green', label='Maximun', lw=2)
+    ax.plot(ax2.get_xticks(),daily_average.iloc[:,0].values, color='blue', label='Average', lw=2)
+    ax.legend()
+    ax.set_yscale(scale)
+    #daily_max.iloc[:,0].plot(ax=ax,grid=True, color='green', label='Maximun',legend=True, lw=2, logy=log,secondary_y=False)
+   
     
     if log:
         scale_log, logscale, max_value = get_log_scale(dataset)
@@ -611,12 +623,9 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
     graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
 
-    graph_subplot(dataset=daily_aggregate, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
-    daily_aggregate = daily_dataset.groupby(tf).mean()[countries]
-    graph_subplot(dataset=daily_aggregate, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=False, tf=tf)
-
-
-    graph_subplot(dataset=active_daily_aggregate, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
+    graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+    
+    graph_subplot2(dataset=active_daily_dataset, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
     graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
 
     
