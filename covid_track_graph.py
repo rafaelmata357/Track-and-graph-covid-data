@@ -656,7 +656,7 @@ if __name__ == '__main__':
     if countries == '': #If no countries specified assume all centroamerica countries 
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'El Salvador','Nicaragua']
     
-    if dash == 'y':
+    if dash == 2:
         #Read and clean data from datasets github repositories
         accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
         recovered_dataset, population = get_and_cleandata(URL_RECOVERED, start_date)
