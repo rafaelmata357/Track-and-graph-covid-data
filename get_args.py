@@ -47,7 +47,7 @@ def get_args():
     
        
     # Argument 1: Number of countries to display 
-    parser.add_argument('--top_n', type = int, default= 5,
+    parser.add_argument('--top_n', type = int, default= 0,
                     help = 'Top n countries to display')  
     
     # Argument 2: Y axis scale to use
@@ -67,7 +67,7 @@ def get_args():
                     help = 'Time frame to plot the data') 
     
     # Argument 6: Dashboard to display different datasets or a general graph with the accumulated and active cases
-    parser.add_argument('--dash', type = str, default = 'daily', choices=['y', 'n'],
+    parser.add_argument('--dash', type = int, default = 'daily', choices=[1, 2, 3],
                     help = 'Display a dashboard with different datasets and analysis') 
     
     # Argument 7: Start date for the dataset
