@@ -63,7 +63,7 @@ def get_args():
                     help = 'Time frame to plot the data') 
     
     # Argument 5: Dashboard to display different datasets or a general graph with the accumulated and active cases
-    parser.add_argument('--dash', type = int, default = 'daily', choices=[1, 2, 3],
+    parser.add_argument('--dash', type = int, default = 1, choices=[1, 2, 3],
                     help = 'Display a dashboard with different datasets and analysis') 
     
     # Argument 6: Start date for the dataset
