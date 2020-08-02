@@ -58,19 +58,15 @@ def get_args():
     parser.add_argument('--country',type = str, default = '',  nargs='+',
                     help = 'Country list') 
     
-    # Argument 4: Active cases / Population Ration
-    parser.add_argument('--agg', type = str, default = 'sum', choices=['sum', 'max', 'mean'],
-                    help = 'Plot the cases/population')  
-    
-    # Argument 5: Time Frame
+    # Argument 4: Time Frame
     parser.add_argument('--tf', type = str, default = 'daily', choices=['daily', 'weekly', 'monthly'],
                     help = 'Time frame to plot the data') 
     
-    # Argument 6: Dashboard to display different datasets or a general graph with the accumulated and active cases
+    # Argument 5: Dashboard to display different datasets or a general graph with the accumulated and active cases
     parser.add_argument('--dash', type = int, default = 'daily', choices=[1, 2, 3],
                     help = 'Display a dashboard with different datasets and analysis') 
     
-    # Argument 7: Start date for the dataset
+    # Argument 6: Start date for the dataset
     parser.add_argument('--start', type = str, default = '2020-01-22',
                     help = 'Start date format YYYY-mm-dd of the dataset to plot the data')
 
