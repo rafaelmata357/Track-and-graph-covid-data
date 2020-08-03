@@ -224,6 +224,7 @@ def daily_test(URL, countries, daily_dataset, time_frame):
     else:
         country = countries[0]
         
+    print('Reading dataset {}'.format(URL.split('/')[-1]))
     dataset = pd.read_csv(URL,index_col=0) 
 
     #print(dataset.head())
@@ -628,15 +629,12 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     
     graph_subplot2(dataset=active_daily_dataset, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
     graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
-
-    
     
     if test_data and not test_ratio_df.empty:
         graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
        
     graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
     plot_benford(ax=axes[2,2], dataset=daily_dataset)
-
 
     plt.show()
 
