@@ -223,34 +223,32 @@ def daily_test(URL, countries, daily_dataset, time_frame):
         country = MAP_JSU_to_OWD[countries[0]]
     else:
         country = countries[0]
-    
-    print('Country:',country)
-    
+        
     dataset = pd.read_csv(URL,index_col=0) 
 
     #print(dataset.head())
     daily_test_dataset = dataset[dataset.index.str.contains(country)][['Date','Daily change in cumulative total']]
-    daily_test_dataset = daily_test_dataset[daily_test_dataset.index.str.contains('tests')]
+    daily_test_dataset.dropna(axis=0, inplace=True)
 
-    
+    daily_test_dataset_tests = daily_test_dataset[daily_test_dataset.index.str.contains('tests')]
+    daily_test_dataset_people = daily_test_dataset[daily_test_dataset.index.str.contains('people')]
+   
+    size_tests_dataset = daily_test_dataset_tests['Daily change in cumulative total'].count()
+    size_people_dataset = daily_test_dataset_people['Daily change in cumulative total'].count()
+
+    if size_tests_dataset >= size_people_dataset:
+        daily_test_dataset =  daily_test_dataset_tests
+    else:
+        daily_test_dataset = daily_test_dataset_people
+
+
     dates = pd.to_datetime(daily_test_dataset.Date.values)
     daily_test_dataset.set_index(dates,inplace=True)
     daily_test_dataset.drop(['Date'], axis=1, inplace=True)
-    daily_test_dataset.dropna(axis=0, inplace=True)
-
-    print(daily_test_dataset)
-    #print(daily_dataset)
-
 
     df = pd.concat([daily_dataset,daily_test_dataset],axis=1)
-    print('DATA:',df)
+ 
     df.dropna(axis=0, inplace=True)
-    
-    print('--'*20)
-    print('Test data set rows merges: {}'.format(daily_test_dataset.count()))
-    print('Test daily cases set rows merges: {}'.format(daily_dataset.count()))
-    print('Merege Test data set rows merges: {}'.format(df.count()))
-    print('--'*20)
     
     df['week'] = df.index.week
     df['month'] = df.index.month
@@ -524,7 +522,7 @@ def unify_datasets(datasetA, datasetB, nameA, nameB):
     for i in range(len(columnsA)):
         columnsB[i] = '{} {}'.format(columnsB[i], nameB)
     
-    print(columnsA)
+   
 
     datasetA.columns = columnsA
     datasetB.columns = columnsB
@@ -575,7 +573,6 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     # Calculate the positive/accumulate test ratio if there is data
     try:
         test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame) 
-        print(test_ratio_df)
         test_data = True
     except:
         test_data = False
@@ -634,7 +631,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
 
     
     
-    if test_data:
+    if test_data and not test_ratio_df.empty:
         graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
        
     graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
