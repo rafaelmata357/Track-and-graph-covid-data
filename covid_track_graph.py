@@ -224,20 +224,33 @@ def daily_test(URL, countries, daily_dataset, time_frame):
     else:
         country = countries[0]
     
-   
+    print('Country:',country)
     
     dataset = pd.read_csv(URL,index_col=0) 
+
+    #print(dataset.head())
     daily_test_dataset = dataset[dataset.index.str.contains(country)][['Date','Daily change in cumulative total']]
+    daily_test_dataset = daily_test_dataset[daily_test_dataset.index.str.contains('tests')]
+
+    
     dates = pd.to_datetime(daily_test_dataset.Date.values)
     daily_test_dataset.set_index(dates,inplace=True)
     daily_test_dataset.drop(['Date'], axis=1, inplace=True)
     daily_test_dataset.dropna(axis=0, inplace=True)
 
-  
+    print(daily_test_dataset)
+    #print(daily_dataset)
+
 
     df = pd.concat([daily_dataset,daily_test_dataset],axis=1)
+    print('DATA:',df)
     df.dropna(axis=0, inplace=True)
-  
+    
+    print('--'*20)
+    print('Test data set rows merges: {}'.format(daily_test_dataset.count()))
+    print('Test daily cases set rows merges: {}'.format(daily_dataset.count()))
+    print('Merege Test data set rows merges: {}'.format(df.count()))
+    print('--'*20)
     
     df['week'] = df.index.week
     df['month'] = df.index.month
@@ -280,7 +293,7 @@ def dashboard_1(dataset, scale, top_n, countries,  title_option):
     dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
   
-    title = '2020 {} Covid Cases until {}'.format(title_option, last_day.strftime('%d/%m'))
+    title = '2020 {} Covid Accumulated confirmed cases until {}'.format(title_option, last_day.strftime('%d/%m'))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
@@ -326,11 +339,11 @@ def dashboard_1(dataset, scale, top_n, countries,  title_option):
     scale_log, logscale, max_value = get_log_scale(graphca)
   
     if scale == 'log':
-        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=True)  # Plot the transpose data
+        graphca.T.plot(ax=axes[1],grid=True, title='Other countries', logy=True)  # Plot the transpose data
         plt.sca(axes[1])
         plt.yticks(scale_log, logscale)
     else:
-        graphca.T.plot(ax=axes[1],grid=True, title='Central America and Mexico', logy=False)  # Plot the transpose data
+        graphca.T.plot(ax=axes[1],grid=True, title='Other countries', logy=False, fontsize=8)  # Plot the transpose data
     
     plt.xticks(fontsize=10)
     plt.grid(True, which='major')
@@ -536,7 +549,7 @@ def sort_dataset(dataset):
     dataset.sort_values(last_day, ascending=False, inplace=True)
     return dataset
 
-def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL, aggregate):
+def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -562,6 +575,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     # Calculate the positive/accumulate test ratio if there is data
     try:
         test_ratio_df = daily_test(URL, countries, daily_dataset, time_frame) 
+        print(test_ratio_df)
         test_data = True
     except:
         test_data = False
@@ -609,16 +623,6 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     else:
         tf = 'week'
     
-    if aggregate == 'sum':
-        daily_aggregate = daily_dataset.groupby(tf).sum()[countries]
-        active_daily_aggregate = active_daily_dataset.groupby(tf).sum()[countries]
-    elif aggregate == 'mean':
-        daily_aggregate = daily_dataset.groupby(tf).mean()[countries]
-        active_daily_aggregate = active_daily_dataset.groupby(tf).mean()[countries]
-    else:
-        daily_aggregate = daily_dataset.groupby(tf).max()[countries]
-        active_daily_aggregate = active_daily_dataset.groupby(tf).max()[countries]
-    
     graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], bar=False, tf='daily')
     graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
     graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
@@ -648,7 +652,7 @@ if __name__ == '__main__':
     top_n = in_arg.top_n
     countries = in_arg.country
     time_frame = in_arg.tf
-    aggregate = in_arg.agg
+
     dash = in_arg.dash
     start_date = in_arg.start
  
@@ -666,7 +670,7 @@ if __name__ == '__main__':
         accumulated_dataset = accumulated_dataset.loc[countries]
         recovered_dataset = recovered_dataset.loc[countries]
         death_dataset = death_dataset.loc[countries]
-        dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING, aggregate)
+        dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING)
     else:
         accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
         dashboard_1(accumulated_dataset, scale, top_n, countries,  'Accumulated')
