@@ -141,6 +141,12 @@ def get_daily_values(dataset):
     
     return daily_dataset
 
+def rolling_window(dataset, window, countries):
+
+    rolling = dataset[countries].rolling(window)
+    
+    return rolling
+
 def benford(dataset):
     '''
     From the daily Dataset values this function calculate the benford laws to analyze the data reported
