@@ -290,14 +290,11 @@ def dashboard_1(dataset, scale, top_n, countries,  title_option):
     
     
     columnas = list(dataset.columns)
-    #dataset.columns = pd.to_datetime(columnas)  #Change the format date to timestamp
- 
-    
+
     initial_day = dataset.columns[0]
     last_day = dataset.columns[-1]
     dataset.sort_values(last_day, ascending=False, inplace=True) #Sort the data by the last column
     
-  
     title = '2020 {} Covid Accumulated confirmed cases until {}'.format(title_option, last_day.strftime('%d/%m'))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
@@ -554,7 +551,7 @@ def sort_dataset(dataset):
     dataset.sort_values(last_day, ascending=False, inplace=True)
     return dataset
 
-def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL):
+def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL, dash):
     '''
     From the Dataset this function graph the data for the top countries and central america countries 
     upto date.
@@ -590,13 +587,6 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     
     top_n_countries = acc_rec_dataset.iloc[:top_n]   #Get top_n coutnries based on acumulated cases
 
-
-    #    pass #maxvalue_str = '{:.2f}'.format(max_value)
-    #else:
-    #    maxvalue_str = str(max_value)
-    #plt.text(datemax,max_value, maxvalue_str) 
-    #axes[1].set_xlabel('Source Data: JHU CSSE COVID-19 Dataset',fontsize=5) 
-
     countries_str = ', '.join(countries)
     last_day = accumulated_dataset.columns[-1]
     title = '2020 Covid  Cases until {} for {}'.format(last_day.strftime('%d/%m'), countries_str)
@@ -612,8 +602,6 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     active_daily_dataset['week'] = active_daily_dataset.index.week
     active_daily_dataset['month'] = active_daily_dataset.index.month
     
-
-    
     if scale == 'log':
         log = True
         ylabel = '#Cases Log Scale'
@@ -627,20 +615,36 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     else:
         tf = 'week'
     
-    graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], bar=False, tf='daily')
-    graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
-    graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
-
-    graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+    if dash==2:
+        graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], bar=False, tf='daily')
+        graph_subplot(dataset=active_dataset.T, log=log, title='Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
+        graph_subplot(dataset=death_dataset.T, log=log, title='Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
+        graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+        graph_subplot2(dataset=active_daily_dataset, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
+        graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
     
-    graph_subplot2(dataset=active_daily_dataset, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
-    graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
-    
-    if test_data and not test_ratio_df.empty:
-        graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
+        if test_data and not test_ratio_df.empty:
+            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
        
-    graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
-    plot_benford(ax=axes[2,2], dataset=daily_dataset)
+        graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
+        plot_benford(ax=axes[2,2], dataset=daily_dataset)
+    else:
+        graph_subplot(dataset=daily_dataset[countries], log=log, title='Daily confirmed cases', ylabel=ylabel, xlabel='', ax=axes[0,0], bar=False, tf='daily')
+        rolling = daily_dataset[countries].rolling('14D')  #Rolling window for 14 days
+
+        death_daily_dataset = get_daily_values(death_dataset.T)
+        
+        graph_subplot(dataset=rolling.sum(), log=log, title='Cumulative 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
+        graph_subplot(dataset=death_daily_dataset, log=log, title='Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
+        graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+        graph_subplot2(dataset=active_daily_dataset, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
+        graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
+    
+        if test_data and not test_ratio_df.empty:
+            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
+       
+        graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
+        plot_benford(ax=axes[2,2], dataset=daily_dataset)
 
     plt.show()
 
@@ -661,7 +665,12 @@ if __name__ == '__main__':
     if countries == '': #If no countries specified assume all centroamerica countries 
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'El Salvador','Nicaragua']
     
-    if dash == 2:
+    
+    
+    if dash==1:
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
+        dashboard_1(accumulated_dataset, scale, top_n, countries,  'Accumulated')
+    else:
         #Read and clean data from datasets github repositories
         accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
         recovered_dataset, population = get_and_cleandata(URL_RECOVERED, start_date)
@@ -671,7 +680,6 @@ if __name__ == '__main__':
         accumulated_dataset = accumulated_dataset.loc[countries]
         recovered_dataset = recovered_dataset.loc[countries]
         death_dataset = death_dataset.loc[countries]
-        dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING)
-    else:
-        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
-        dashboard_1(accumulated_dataset, scale, top_n, countries,  'Accumulated')
+        dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, countries, population, time_frame, URL_TESTING, dash)
+
+        
