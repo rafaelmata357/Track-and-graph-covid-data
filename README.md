@@ -23,19 +23,18 @@ The app has two options:
 - top_n: Option to specify the number (n) of countries to show in the graph
 - scale: Option to select between Log or Linear scale for the y axis of the graphs
 - country : specify the countries to plot the data
-- pop : specify if the plot value is the ratio cases/population option: [y,n]
-- ds  : Dataset options, accumulated cases, recovered cases, deaths option: [acc, rec, death]
 - tf  : Time frame option [daily, weekly, monthly]
-- benf: Benfords´s Law anaylisis to check if the dataset sastify this law 
-- ratio: Plots the positive cases vs tests [test] option use with --tf [weekly|monthly] or plots %recovered cases [rec] option use when --ds [act] option 
+- dash: Dashboard number to display [1,2,3] 
+- start: start date format yyyy-mm-dd 
 
 From terminal command line execute:
 
-`$ python covid_track_graph.py --top_n n  --scale [log | lin] --pop [y|n] --ds [acc|rec|death] -tf [daily | weekly | monthly] --benf [y|n]  --ratio [test|rec]`
+`$ python covid_track_graph.py --top_n n  --scale [log | lin] -tf [daily | weekly | monthly] --dash [1|2|3]  --start yyyy-mm-dd`
 
 Example:
 
-`$ python covid_track_graph.py --top_n 6 --scale log --ds rec`
+`$ python covid_track_graph.py --top_n 6 --scale log --dash 1`
+`$ python covid_track_graph.py --country 'Costa Rica' --scale log --dash 2`
 
 In addition to get help execute:
 
