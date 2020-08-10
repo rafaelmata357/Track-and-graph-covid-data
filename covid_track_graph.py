@@ -266,10 +266,14 @@ def daily_test(URL, countries, daily_dataset, time_frame):
     if time_frame == 'weekly':
         df2 = df.groupby('week').sum()[[countries[0],'Daily change in cumulative total']] 
         df2['Positive Cases'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
-    else:
+        df2['WHO Recommend value'] = 10  #Set the WHO reccomended test/cases ratio 10% 
+    elif time_frame == 'monthly':
         df2 = df.groupby('month').sum()[[countries[0],'Daily change in cumulative total']]
         df2['Positive Cases'] = df2[countries[0]]/df2['Daily change in cumulative total']*100
-    df2['WHO Recommend value'] = 10  #Set the WHO reccomended test/cases ratio 10% 
+        df2['WHO Recommend value'] = 10  #Set the WHO reccomended test/cases ratio 10% 
+    else:
+        df2 = df
+    
     
     return df2
 
@@ -638,6 +642,15 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         death_daily_dataset = get_daily_values(death_dataset.T)
 
         rolling_death_ds = death_daily_dataset[countries].rolling('14D') # 14 days Rolling window for death dataset
+
+        try:
+            daily_test_dataset = daily_test(URL, countries, daily_dataset, 'daily') 
+            
+            daily_test_dataset.columns = ['cases','w', 'm', 'tests']
+            print(daily_test_dataset)
+            test_data = True
+        except:
+            test_data = False
     
         fatality_rate_dataset = death_dataset/accumulated_dataset*100
         graph_subplot(dataset=rolling.sum(), log=log, title='Cumulative 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
@@ -649,9 +662,8 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         graph_subplot(dataset=death_dataset_pop.T, log=log, title='Death Accumulated cases by 1M population', ylabel='', xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
     
         if test_data and not test_ratio_df.empty:
-            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
-       
-        graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
+            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='  Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[1,2], bar=True, tf=tf)
+            graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], bar=False, tf='daily')
         plot_benford(ax=axes[2,2], dataset=daily_dataset)
 
     plt.show()
