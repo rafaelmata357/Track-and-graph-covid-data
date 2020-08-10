@@ -394,7 +394,7 @@ def columns_dataset_to_timestamp(dataset):
     return dataset
 
 
-def graph_subplot(dataset, log, title, ylabel, xlabel, ax, bar, tf):
+def graph_subplot(dataset, log, title, ylabel, xlabel, ax, type, tf):
 
     '''
     Fuction to graph a subplot 
@@ -410,11 +410,14 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, bar, tf):
          None
     '''
 
-    if bar:
+    if type=='bar':
         dataset.plot.bar(ax=ax, grid=True, logy=log )
-    else:
+    elif type=='line':
         dataset.plot(ax=ax, grid=True, logy=log )
-    
+    else:
+        color = dataset['cases']//5
+        dataset.plot.scatter(ax=ax, x='tests',y='cases',c='b')
+
     if log:
         scale_log, logscale, max_value = get_log_scale(dataset)
         plt.sca(ax)
@@ -623,20 +626,20 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         tf = 'week'
     
     if dash==2:
-        graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], bar=False, tf='daily')
-        graph_subplot(dataset=active_dataset.T, log=log, title='Accumulate Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
-        graph_subplot(dataset=death_dataset.T, log=log, title='Accumulated Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
-        graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=True, tf=tf)
+        graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='line', tf='daily')
+        graph_subplot(dataset=active_dataset.T, log=log, title='Accumulate Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], type='line', tf='daily')
+        graph_subplot(dataset=death_dataset.T, log=log, title='Accumulated Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], type='line', tf='daily')
+        graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=False, tf=tf)
         graph_subplot2(dataset=active_daily_dataset, log=log, title='Active {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[1,1], bar=True, tf=tf)
-        graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], bar=False, tf='daily')
+        graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], type='line', tf='daily')
     
         if test_data and not test_ratio_df.empty:
-            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], bar=True, tf=tf)
+            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], type='bar', tf=tf)
        
-        graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], bar=False, tf='daily')
+        graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], type='line', tf='daily')
         plot_benford(ax=axes[2,2], dataset=daily_dataset)
     else:
-        graph_subplot(dataset=daily_dataset[countries], log=log, title='Daily confirmed cases', ylabel=ylabel, xlabel='', ax=axes[0,0], bar=False, tf='daily')
+        graph_subplot(dataset=daily_dataset[countries], log=log, title='Daily confirmed cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='line', tf='daily')
         rolling = daily_dataset[countries].rolling('14D')  #Rolling window for 14 days
 
         death_daily_dataset = get_daily_values(death_dataset.T)
@@ -653,18 +656,18 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
             test_data = False
     
         fatality_rate_dataset = death_dataset/accumulated_dataset*100
-        graph_subplot(dataset=rolling.sum(), log=log, title='Cumulative 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,0], bar=False, tf='daily')
-        graph_subplot(dataset=death_daily_dataset, log=log, title='Daily Death cases', ylabel=ylabel, xlabel='', ax=axes[0,1], bar=False, tf='daily')
-        graph_subplot(dataset=fatality_rate_dataset.T, log=log, title='%Fatality rate', ylabel='%', xlabel='', ax=axes[2,1], bar=False, tf=tf)
-        graph_subplot(dataset=rolling_death_ds.sum(), log=log, title='Cumulative Death cases 14 days rolling window', ylabel='', xlabel='', ax=axes[1,1], bar=False, tf=tf)
+        graph_subplot(dataset=rolling.sum(), log=log, title='Cumulative 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,0], type='line', tf='daily')
+        graph_subplot(dataset=death_daily_dataset, log=log, title='Daily Death cases', ylabel=ylabel, xlabel='', ax=axes[0,1], type='line', tf='daily')
+        graph_subplot(dataset=fatality_rate_dataset.T, log=log, title='%Fatality rate', ylabel='%', xlabel='', ax=axes[2,1], type='line', tf=tf)
+        graph_subplot(dataset=rolling_death_ds.sum(), log=log, title='Cumulative Death cases 14 days rolling window', ylabel='', xlabel='', ax=axes[1,1], type='line', tf=tf)
         death_dataset_pop = cases_population_ratio(population, death_dataset) 
 
-        graph_subplot(dataset=death_dataset_pop.T, log=log, title='Death Accumulated cases by 1M population', ylabel='', xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], bar=False, tf='daily')
+        graph_subplot(dataset=death_dataset_pop.T, log=log, title='Death Accumulated cases by 1M population', ylabel='', xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], type='line', tf='daily')
     
         if test_data and not test_ratio_df.empty:
-            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='  Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[1,2], bar=True, tf=tf)
-            graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], bar=False, tf='daily')
-        plot_benford(ax=axes[2,2], dataset=daily_dataset)
+            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='  Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[1,2], type='bar', tf=tf)
+            graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], type='line', tf='daily')
+            graph_subplot(dataset=daily_test_dataset, log=log, title='Daily tests vs Confirmed cases', ylabel='', xlabel='', ax=axes[2,2], type='scatter', tf='daily')
 
     plt.show()
 
