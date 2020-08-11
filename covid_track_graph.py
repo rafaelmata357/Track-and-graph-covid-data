@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  9 August 2020
+# REVISED DATE :  10 August 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import math
 import datetime
+import seaborn as sns
 
 # Imports functions created for this program
 from get_args import get_args
@@ -415,8 +416,9 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, type, tf):
     elif type=='line':
         dataset.plot(ax=ax, grid=True, logy=log )
     else:
-        color = dataset['cases']//5
-        dataset.plot.scatter(ax=ax, x='tests',y='cases',c='b')
+        #color = dataset['cases']//10
+        #dataset.plot.scatter(ax=ax, x='tests',y='cases',c= ['green','yellow'])
+        sns.regplot(ax=ax,x="tests", y="cases", data=dataset)
 
     if log:
         scale_log, logscale, max_value = get_log_scale(dataset)
