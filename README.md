@@ -42,8 +42,11 @@ In addition to get help execute:
 
 # Output Example:
 
+Dashboard #1
 ![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example1.png)
+Dashboard #2
 ![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example2.png)
+Dashboard #3
 ![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example3.png)
 
 # Terms of use:
