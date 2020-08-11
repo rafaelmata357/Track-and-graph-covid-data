@@ -42,9 +42,9 @@ In addition to get help execute:
 
 # Output Example:
 
-![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example.png)
-![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/benfords%20analysis%20example.png)
-![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/weekly%20cases%20example.png)
+![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example1.png)
+![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example2.png)
+![Example](https://github.com/rafaelmata357/Track-and-graph-covid-data/blob/master/example3.png)
 
 # Terms of use:
 
