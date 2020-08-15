@@ -164,6 +164,7 @@ def benford(dataset):
     '''
     
     digits_map = {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0}  #Digits hash table
+    print(dataset)
     daily_values = dataset.values
 
     if len(dataset.shape) > 1:   #Check if is a vector single country data or matrix more than one country data
@@ -174,7 +175,7 @@ def benford(dataset):
                     digits_map[first_digit] += 1                         #Count the number of firts digits for the daily values
     else:
         for Number in daily_values:
-            first_digit = str(number)[0]
+            first_digit = str(Number)[0]
             if first_digit in ['1','2','3','4','5','6','7','8','9']:
                 digits_map[first_digit] += 1          
 
@@ -487,7 +488,7 @@ def graph_subplot2(dataset, log, title, ylabel, xlabel, ax, bar, tf):
         #i.set_rotation(75)
         i.set_fontsize(6)
 
-def plot_benford(ax, dataset):
+def plot_benford(ax, dataset, title, xlabel):
     '''
     From the Dataset this function graph the benford analysis
       
@@ -505,8 +506,8 @@ def plot_benford(ax, dataset):
     digits_values = digits_values / digits_values.sum()*100 # Calculate the percentage
     df = pd.DataFrame({'P(D)':digits_values,'Benford´s Law':[30.1,17.6,12.5,9.7,7.9,6.7,5.8,5.1,4.6]},index=digits_map.keys())
     df.plot.bar(ax=ax, grid=True, logy=False, fontsize=8)
-    ax.set_xlabel('First Digits of the dataset',fontsize=6)
-    title='Benford Law Analysis'
+    ax.set_xlabel(xlabel,fontsize=6)
+    
     ax.set_title(title, fontsize=9, fontweight='bold')
     ax.set_ylabel(ylabel)
     r = ax.get_xticklabels()
@@ -636,10 +637,13 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         graph_subplot(dataset=acc_dataset_pop.T, log=log, title='Accumulated cases by 1M population', ylabel='', xlabel='', ax=axes[2,1], type='line', tf='daily')
     
         if test_data and not test_ratio_df.empty:
+           
             graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='%Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[0,2], type='bar', tf=tf)
        
         graph_subplot(dataset=pct_recovered.T, log=False, title='%Recovered cases', ylabel='%', xlabel='', ax=axes[1,2], type='line', tf='daily')
-        plot_benford(ax=axes[2,2], dataset=daily_dataset)
+        xlabel = 'First Digits of the dataset'
+        title = 'Benford Law Analysis'
+        plot_benford(ax=axes[2,2], dataset=daily_dataset[countries], title=title, xlabel=xlabel)
     elif dash == 3:
         graph_subplot(dataset=daily_dataset[countries], log=log, title='Daily confirmed cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='line', tf='daily')
         rolling = daily_dataset[countries].rolling('14D')  #Rolling window for 14 days
@@ -652,7 +656,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
             daily_test_dataset = daily_test(URL, countries, daily_dataset, 'daily') 
             
             daily_test_dataset.columns = ['cases','w', 'm', 'tests']
-            print(daily_test_dataset)
+        
             test_data = True
         except:
             test_data = False
@@ -671,7 +675,30 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
             graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], type='line', tf='daily')
             graph_subplot(dataset=daily_test_dataset, log=log, title='Daily tests vs Confirmed cases', ylabel='', xlabel='', ax=axes[2,2], type='scatter', tf='daily')
     else:
-        plot_benford(ax=axes[2,2], dataset=daily_dataset)
+        title = countries[0]
+        plot_benford(ax=axes[0,0], dataset=daily_dataset[countries[0]], title=title, xlabel='')
+        title = countries[1]
+        plot_benford(ax=axes[0,1], dataset=daily_dataset[countries[1]], title=title, xlabel='')
+        title = countries[2]
+        
+        plot_benford(ax=axes[0,2], dataset=daily_dataset[countries[2]], title=title, xlabel='')
+        title = countries[3]
+        plot_benford(ax=axes[1,0], dataset=daily_dataset[countries[3]], title=title, xlabel='')
+        title = countries[4]
+        plot_benford(ax=axes[1,1], dataset=daily_dataset[countries[4]], title=title, xlabel='')
+        title = countries[5]
+        
+        plot_benford(ax=axes[1,2], dataset=daily_dataset[countries[5]], title=title, xlabel='')
+        title = countries[6]
+        xlabel = 'First Digits of the dataset'
+        plot_benford(ax=axes[2,0], dataset=daily_dataset[countries[6]], title=title, xlabel=xlabel)
+        title = countries[7]
+        xlabel = 'First Digits of the dataset'
+        plot_benford(ax=axes[2,1], dataset=daily_dataset[countries[7]], title=title, xlabel=xlabel)
+        title = countries[8]
+        xlabel = 'First Digits of the dataset'
+        plot_benford(ax=axes[2,2], dataset=daily_dataset[countries[8]], title=title, xlabel=xlabel)
+
 
     plt.show()
 
@@ -704,6 +731,7 @@ if __name__ == '__main__':
         death_dataset, population = get_and_cleandata(URL_DEATHS, start_date)
     
          #Filter the countries to explore and analyze
+        print(countries)
         accumulated_dataset = accumulated_dataset.loc[countries]
         recovered_dataset = recovered_dataset.loc[countries]
         death_dataset = death_dataset.loc[countries]
