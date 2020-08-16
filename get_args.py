@@ -18,7 +18,7 @@
 
 import os
 import argparse
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 
 
 
@@ -80,7 +80,7 @@ def get_args():
     yesterday = today - timedelta(days=1)
     yesterday_str = yesterday.strftime("%Y-%m-%d")
 
-    parser.add_argument('--end', type = str, default = yesterday,
+    parser.add_argument('--end', type = str, default = yesterday_str,
                     help = 'End date format YYYY-mm-dd of the dataset to plot the data')
 
     
