@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  29 july   2020
+# REVISED DATE :  15 August  2020
 # PURPOSE: Create a function that retrieves the args for the covid track program
 #          from the user using the Argparse Python module. If the user does not 
 #          input the params default value is used. 
@@ -18,6 +18,9 @@
 
 import os
 import argparse
+from datetime import datetime, timedelta
+
+
 
 
 # 
@@ -69,6 +72,16 @@ def get_args():
     # Argument 6: Start date for the dataset
     parser.add_argument('--start', type = str, default = '2020-01-22',
                     help = 'Start date format YYYY-mm-dd of the dataset to plot the data')
+    
+       
+    # Argument 6: End date for the dataset
+    #Get the current day and subtrac one day
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    yesterday_str = yesterday.strftime("%Y-%m-%d")
+
+    parser.add_argument('--end', type = str, default = yesterday,
+                    help = 'End date format YYYY-mm-dd of the dataset to plot the data')
 
     
    #wrapper_descriptor
