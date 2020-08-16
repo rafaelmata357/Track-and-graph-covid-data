@@ -38,7 +38,7 @@ URL_RECOVERED = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/maste
 URL_DEATHS = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
 URL_TESTING ='https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv'
 
-def get_and_cleandata(URL, start_date):
+def get_and_cleandata(URL, start_date, end_date):
 
     '''
     Download the data from the JHU github repository and prepare the data to graph
@@ -66,9 +66,10 @@ def get_and_cleandata(URL, start_date):
     subdata =  columns_dataset_to_timestamp(subdata) #Change the columns format date to timestamp
 
     start_date_obj = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date_obj = datetime.datetime.strptime(end_date, '%Y-%m-%d')
     #Filter the dataset using the start date selected
 
-    subdata = subdata.loc[:,start_date_obj:]
+    subdata = subdata.loc[:,start_date_obj:end_date_obj]
     
     #Sort datasets using last day data as as key
     subdata = sort_dataset(subdata)
@@ -714,21 +715,22 @@ if __name__ == '__main__':
 
     dash = in_arg.dash
     start_date = in_arg.start
- 
+    end_date = in_arg.end
 
+   
     if countries == '': #If no countries specified assume all centroamerica countries 
         countries = ['Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'El Salvador','Nicaragua']
     
     
     
     if dash==1:
-        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date, end_date)
         dashboard_1(accumulated_dataset, scale, top_n, countries,  'Accumulated')
     else:
         #Read and clean data from datasets github repositories
-        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date)
-        recovered_dataset, population = get_and_cleandata(URL_RECOVERED, start_date)
-        death_dataset, population = get_and_cleandata(URL_DEATHS, start_date)
+        accumulated_dataset, population = get_and_cleandata(URL_ACCUMULATED_CASES, start_date, end_date)
+        recovered_dataset, population = get_and_cleandata(URL_RECOVERED, start_date, end_date)
+        death_dataset, population = get_and_cleandata(URL_DEATHS, start_date, end_date)
     
          #Filter the countries to explore and analyze
         print(countries)
