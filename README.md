@@ -24,8 +24,9 @@ The app has two options:
 - scale: Option to select between Log or Linear scale for the y axis of the graphs
 - country : specify the countries to plot the data
 - tf  : Time frame option [daily, weekly, monthly]
-- dash: Dashboard number to display [1,2,3] 
+- dash: Dashboard number to display [1,2,3,4] 
 - start: start date format yyyy-mm-dd 
+- end: end date format yyyy-mm-dd 
 
 From terminal command line execute:
 
