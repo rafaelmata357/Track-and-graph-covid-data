@@ -30,12 +30,12 @@ The app has two options:
 
 From terminal command line execute:
 
-`$ python covid_track_graph.py --top_n n  --scale [log | lin] -tf [daily | weekly | monthly] --dash [1|2|3]  --start yyyy-mm-dd`
+`$ python covid_track_graph.py --top_n n  --scale [log | lin] -tf [daily | weekly | monthly] --dash [1|2|4]  --start yyyy-mm-dd --end yyyy-mm-dd`
 
 Example:
 
 `$ python covid_track_graph.py --top_n 6 --scale log --dash 1`
-`$ python covid_track_graph.py --country 'Costa Rica' --scale log --dash 2`
+`$ python covid_track_graph.py --country 'Costa Rica' --scale log --dash 2 --start 2020-03-01`
 
 In addition to get help execute:
 
