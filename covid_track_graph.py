@@ -13,9 +13,10 @@
 #  1. Top countries number                      --top number
 #  2. Scale                                     --scale [log/lin]
 #  3. Countries  list to plot                   --country [Country Name]
-#  4. Dashboard option                          --dash [1,2,3]
+#  4. Dashboard option                          --dash [1,2,3,4]
 #  5. tf                                        --tf [daily, weekly, monthly]
-## 5. Start date                                --start yyyy-mm-dd
+## 6. Start date                                --start yyyy-mm-dd
+#  7. End date                                  --end yyyy-mm-dd
 
 # Imports python modules
 
