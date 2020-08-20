@@ -16,7 +16,7 @@
 #  4. Dashboard option                          --dash [1,2,3,4]
 #  5. tf                                        --tf [daily, weekly, monthly]
 ## 6. Start date                                --start yyyy-mm-dd
-#  7. End date                                  --end yyyy-mm-dd
+#  7. End date                                   --end yyyy-mm-dd
 
 # Imports python modules
 
