@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  13 August 2020
+# REVISED DATE :  20 August 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -414,7 +414,11 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, type, tf):
          None
     '''
 
-    if type=='bar':
+    if type=='area' and log==False:
+        dataset.plot.area(ax=ax, grid=True, logy=log )
+    elif type=='area' and log==True:
+        dataset.plot(ax=ax, grid=True, logy=log )
+    elif type=='bar':
         dataset.plot.bar(ax=ax, grid=True, logy=log )
     elif type=='line':
         dataset.plot(ax=ax, grid=True, logy=log )
@@ -631,7 +635,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         tf = 'week'
     
     if dash==2:
-        graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='line', tf='daily')
+        graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='area', tf='daily')
         graph_subplot(dataset=active_dataset.T, log=log, title='Accumulate Active cases', ylabel=ylabel, xlabel='', ax=axes[1,0], type='line', tf='daily')
         graph_subplot(dataset=death_dataset.T, log=log, title='Accumulated Death cases', ylabel=ylabel, xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], type='line', tf='daily')
         graph_subplot2(dataset=daily_dataset, log=log, title='Accumulated {}tly cases'.format(tf), ylabel='', xlabel='', ax=axes[0,1], bar=False, tf=tf)
