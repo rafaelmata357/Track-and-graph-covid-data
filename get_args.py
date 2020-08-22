@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  15 August  2020
+# REVISED DATE :  21 August  2020
 # PURPOSE: Create a function that retrieves the args for the covid track program
 #          from the user using the Argparse Python module. If the user does not 
 #          input the params default value is used. 
@@ -62,7 +62,7 @@ def get_args():
                     help = 'Country list') 
     
     # Argument 4: Time Frame
-    parser.add_argument('--tf', type = str, default = 'daily', choices=['daily', 'weekly', 'monthly'],
+    parser.add_argument('--tf', type = str, default = 'weekly', choices=['daily', 'weekly', 'monthly'],
                     help = 'Time frame to plot the data') 
     
     # Argument 5: Dashboard to display different datasets or a general graph with the accumulated and active cases
