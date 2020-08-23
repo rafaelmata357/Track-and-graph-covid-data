@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  20 August 2020
+# REVISED DATE :  23 August 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -680,7 +680,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
             graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='  Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[1,2], type='bar', tf=tf)
             graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], type='line', tf='daily')
             graph_subplot(dataset=daily_test_dataset, log=log, title='Daily tests vs Confirmed cases', ylabel='', xlabel='', ax=axes[2,2], type='scatter', tf='daily')
-    else:
+    elif dash==3:
         title = countries[0]
         plot_benford(ax=axes[0,0], dataset=daily_dataset[countries[0]], title=title, xlabel='')
         title = countries[1]
@@ -704,7 +704,8 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         title = countries[8]
         xlabel = 'First Digits of the dataset'
         plot_benford(ax=axes[2,2], dataset=daily_dataset[countries[8]], title=title, xlabel=xlabel)
-
+    else:
+        Continue
 
     plt.show()
 
