@@ -521,6 +521,10 @@ def plot_benford(ax, dataset, title, xlabel):
         #i.set_rotation(75)
         i.set_fontsize(6)
 
+
+def partial_results(dataset):
+    pass
+
 def unify_datasets(datasetA, datasetB, nameA, nameB):
     '''
     From two datasets, unify both and add an id if the columns are the same
@@ -705,7 +709,8 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         xlabel = 'First Digits of the dataset'
         plot_benford(ax=axes[2,2], dataset=daily_dataset[countries[8]], title=title, xlabel=xlabel)
     else:
-        Continue
+        print('Dashboar #4')
+        
 
     plt.show()
 
