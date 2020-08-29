@@ -523,7 +523,20 @@ def plot_benford(ax, dataset, title, xlabel):
 
 
 def partial_results(dataset):
-    pass
+    initial_day = '2020-03-01'
+    acumulado = [] 
+    for index in dataset.index: 
+        suma_parcial = dataset.loc[initial_day:index].sum() 
+        week_sum = dataset.loc[index] 
+ 
+        if suma_parcial != 0: 
+            pct_week = week_sum/suma_parcial * 100 
+        else: 
+            pct_week = 0 
+
+            acumulado.append(pct_week) 
+            result = dataset.to_frame() 
+            dataset['pct'] = acumulado 
 
 def unify_datasets(datasetA, datasetB, nameA, nameB):
     '''
