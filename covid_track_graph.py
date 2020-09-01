@@ -522,13 +522,14 @@ def plot_benford(ax, dataset, title, xlabel):
         i.set_fontsize(6)
 
 
-def partial_results(dataset):
-    initial_day = '2020-03-01'
+def partial_results(dataset, start_date):
+    initial_day = start_date
     acumulado = [] 
     for index in dataset.index: 
         suma_parcial = dataset.loc[initial_day:index].sum() 
         week_sum = dataset.loc[index] 
  
+
         if suma_parcial != 0: 
             pct_week = week_sum/suma_parcial * 100 
         else: 
