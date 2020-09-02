@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  27 August 2020
+# REVISED DATE :  1 September 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -15,7 +15,7 @@
 #  3. Countries  list to plot                   --country [Country Name]
 #  4. Dashboard option                          --dash [1,2,3,4]
 #  5. tf                                        --tf [daily, weekly, monthly]
-## 6. Start date                                --start yyyy-mm-dd
+# 6. Start date                                --start yyyy-mm-dd
 #  7. End date                                   --end yyyy-mm-dd
 
 # Imports python modules
