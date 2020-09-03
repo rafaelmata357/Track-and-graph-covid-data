@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  22 August  2020
+# REVISED DATE :  2 September  2020
 # PURPOSE: Create a function that retrieves the args for the covid track program
 #          from the user using the Argparse Python module. If the user does not 
 #          input the params default value is used. 
@@ -35,7 +35,10 @@ def get_args():
         1. Top n countries                           --top_n
         2. Log or linear scale for Y axis            --scale
         3. Countries  list to plot                   --country
-        4. Population ratio                          --pop 
+        4. Time frame                                --tf
+        5. Dashboard                                 --dash
+        6. Stard date                                --start
+        7. End date                                  --end
    
     This function returns these arguments as an ArgumentParser object.
     Parameters:
