@@ -15,8 +15,8 @@
 #  3. Countries  list to plot                   --country [Country Name]
 #  4. Dashboard option                          --dash [1,2,3,4]
 #  5. tf                                        --tf [daily, weekly, monthly]
-# 6. Start date                                --start yyyy-mm-dd
-#  7. End date                                   --end yyyy-mm-dd
+#  6. Start date                                --start yyyy-mm-dd
+#  7. End date                                  --end yyyy-mm-dd
 
 # Imports python modules
 
@@ -526,7 +526,7 @@ def partial_results(dataset, start_date):
     initial_day = start_date
     acumulado = [] 
     for index in dataset.index: 
-        suma_parcial = dataset.loc[initial_day:index].sum() 
+        suma_parcial = dataset.loc[start_date:index].sum() 
         week_sum = dataset.loc[index] 
  
 
