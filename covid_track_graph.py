@@ -523,6 +523,16 @@ def plot_benford(ax, dataset, title, xlabel):
 
 
 def partial_results(dataset, start_date):
+    '''
+    From the datasets, sort it using the last reported value
+      
+    Args:
+        datsetA: data Frame
+        
+       
+    Returns:
+        sort_dataset: data Frame 
+    '''
     initial_day = start_date
     acumulado = [] 
     for index in dataset.index: 
