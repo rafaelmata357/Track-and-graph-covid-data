@@ -524,14 +524,16 @@ def plot_benford(ax, dataset, title, xlabel):
 
 def partial_results(dataset, start_date):
     '''
-    From the datasets, sort it using the last reported value
+    From the datasets, calculate the partial sum from the start_date and return the each week representative percentage vs the total 
+    until that week, example for the first month %last_week = week4/sum(week1, week2, week3, weel4) 
       
     Args:
-        datsetA: data Frame
+        dataset: data Frame with the daily values
+        start_date : timestamp date to start the cumulative sum
         
        
     Returns:
-        sort_dataset: data Frame 
+        dataset_result : data Frame with the cummulative sums for each week period with the percentage that it represents 
     '''
     initial_day = start_date
     acumulado = [] 
