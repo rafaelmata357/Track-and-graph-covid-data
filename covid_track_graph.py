@@ -536,10 +536,12 @@ def partial_results(dataset, start_date):
         dataset_result : data Frame with the cummulative sums for each week period with the percentage that it represents 
     '''
     initial_day = start_date
+    #initial_day = '2020-03-01' 
+    sub_df = sub_df['Costa Rica'].resample('W').sum() 
     acumulado = [] 
-    for index in dataset.index: 
-        suma_parcial = dataset.loc[start_date:index].sum() 
-        week_sum = dataset.loc[index] 
+    for index in sub_df.index: 
+        suma_parcial = sub_df.loc[start_date:index].sum() 
+        week_sum = sub_df.loc[index] 
  
 
         if suma_parcial != 0: 
@@ -547,9 +549,10 @@ def partial_results(dataset, start_date):
         else: 
             pct_week = 0 
 
-            acumulado.append(pct_week) 
-            result = dataset.to_frame() 
-            dataset['pct'] = acumulado 
+        acumulado.append(pct_week) 
+    result = sub_df.to_frame() 
+    sub_df['pct'] = acumulado 
+    return sub_df
 
 def unify_datasets(datasetA, datasetB, nameA, nameB):
     '''
