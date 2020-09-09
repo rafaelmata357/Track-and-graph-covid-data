@@ -525,7 +525,7 @@ def plot_benford(ax, dataset, title, xlabel):
 def partial_results(dataset, start_date):
     '''
     From the datasets, calculate the partial sum from the start_date and return the each week representative percentage vs the total 
-    until that week, example for the first month %last_week = week4/sum(week1, week2, week3, weel4) 
+    until that week, example for the first month %last_week = week4/sum(week1, week2, week3, week4) 
       
     Args:
         dataset: data Frame with the daily values
