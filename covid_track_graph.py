@@ -28,6 +28,8 @@ import matplotlib.dates as mdates
 import math
 import datetime
 import seaborn as sns
+import matplotlib.dates as mdates
+from matplotlib.dates import DateFormatter
 
 # Imports functions created for this program
 from get_args import get_args
@@ -418,6 +420,13 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, type, tf):
         dataset.plot.area(ax=ax, grid=True, logy=log )
     elif type=='area' and log==True:
         dataset.plot(ax=ax, grid=True, logy=log )
+    elif type=='bar' and tf == 'weekly':
+     
+        #ax.xaxis.set_major_formatter(date_form)
+        ax.xaxis.set_major_formatter(DateFormatter('%W')) 
+        #
+        ax.bar(dataset.index, dataset['pct'],width=5)
+        
     elif type=='bar':
         dataset.plot.bar(ax=ax, grid=True, logy=log )
     elif type=='line':
@@ -742,7 +751,9 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
     else:
         print('Dashboar #4')
         df = partial_results(daily_dataset.iloc[:,0], start_date)
-        print(df)
+               
+        graph_subplot(dataset=df, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='bar', tf='weekly')
+       
 
     plt.show()
 
