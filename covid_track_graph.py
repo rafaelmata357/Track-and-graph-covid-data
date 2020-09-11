@@ -537,7 +537,9 @@ def partial_results(dataset, start_date):
     '''
     initial_day = start_date
     #initial_day = '2020-03-01' 
-    sub_df = sub_df['Costa Rica'].resample('W').sum() 
+   
+    sub_df = dataset.resample('W').sum() 
+ 
     acumulado = [] 
     for index in sub_df.index: 
         suma_parcial = sub_df.loc[start_date:index].sum() 
@@ -551,8 +553,8 @@ def partial_results(dataset, start_date):
 
         acumulado.append(pct_week) 
     result = sub_df.to_frame() 
-    sub_df['pct'] = acumulado 
-    return sub_df
+    result['pct'] = acumulado 
+    return result
 
 def unify_datasets(datasetA, datasetB, nameA, nameB):
     '''
@@ -739,7 +741,8 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         plot_benford(ax=axes[2,2], dataset=daily_dataset[countries[8]], title=title, xlabel=xlabel)
     else:
         print('Dashboar #4')
-        
+        df = partial_results(daily_dataset.iloc[:,0], start_date)
+        print(df)
 
     plt.show()
 
