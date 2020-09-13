@@ -426,7 +426,12 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, type, tf):
         ax.xaxis.set_major_formatter(DateFormatter('%W')) 
         #
         ax.bar(dataset.index, dataset['pct'],width=5)
-        
+    elif type=='bar' and tf == 'monthly':
+     
+        #ax.xaxis.set_major_formatter(date_form)
+        ax.xaxis.set_major_formatter(DateFormatter('%m')) 
+        #
+        ax.bar(dataset.index, dataset['pct'],width=5)   
     elif type=='bar':
         dataset.plot.bar(ax=ax, grid=True, logy=log )
     elif type=='line':
@@ -531,7 +536,7 @@ def plot_benford(ax, dataset, title, xlabel):
         i.set_fontsize(6)
 
 
-def partial_results(dataset, start_date):
+def partial_results(dataset, start_date, tf):
     '''
     From the datasets, calculate the partial sum from the start_date and return the each week representative percentage vs the total 
     until that week, example for the first month %last_week = week4/sum(week1, week2, week3, week4) 
@@ -547,7 +552,10 @@ def partial_results(dataset, start_date):
     initial_day = start_date
     #initial_day = '2020-03-01' 
    
-    sub_df = dataset.resample('W').sum() 
+    if tf == 'weekly':
+        sub_df = dataset.resample('W').sum() 
+    else:
+        sub_df = dataset.resample('M').sum()
  
     acumulado = [] 
     for index in sub_df.index: 
@@ -563,6 +571,7 @@ def partial_results(dataset, start_date):
         acumulado.append(pct_week) 
     result = sub_df.to_frame() 
     result['pct'] = acumulado 
+    
     return result
 
 def unify_datasets(datasetA, datasetB, nameA, nameB):
@@ -749,11 +758,13 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         xlabel = 'First Digits of the dataset'
         plot_benford(ax=axes[2,2], dataset=daily_dataset[countries[8]], title=title, xlabel=xlabel)
     else:
-        print('Dashboar #4')
-        df = partial_results(daily_dataset.iloc[:,0], start_date)
-               
-        graph_subplot(dataset=df, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='bar', tf='weekly')
-       
+        graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='area', tf='daily')
+        
+        df_w = partial_results(daily_dataset.iloc[:,0], start_date,'weekly')
+        df_m = partial_results(daily_dataset.iloc[:,0], start_date,'monthly')
+        print(df_m)       
+        graph_subplot(dataset=df_w, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[1,0], type='bar', tf='weekly')
+        graph_subplot(dataset=df_m, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[2,0], type='bar', tf='monthly')
 
     plt.show()
 
