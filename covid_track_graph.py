@@ -762,9 +762,9 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         
         df_w = partial_results(daily_dataset.iloc[:,0], start_date,'weekly')
         df_m = partial_results(daily_dataset.iloc[:,0], start_date,'monthly')
-        print(df_m)       
+        
         graph_subplot(dataset=df_w, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[1,0], type='bar', tf='weekly')
-        graph_subplot(dataset=df_m, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[2,0], type='bar', tf='monthly')
+        graph_subplot(dataset=df_m, log=log, title='%Monthly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[2,0], type='bar', tf='monthly')
 
     plt.show()
 
