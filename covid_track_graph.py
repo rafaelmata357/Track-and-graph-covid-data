@@ -765,7 +765,9 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         
         graph_subplot(dataset=df_w, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[1,0], type='bar', tf='weekly')
         graph_subplot(dataset=df_m, log=log, title='%Monthly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[2,0], type='bar', tf='monthly')
-
+        graph_subplot(dataset=daily_dataset[countries], log=log, title='Daily confirmed cases', ylabel=ylabel, xlabel='', ax=axes[0,1], type='line', tf='daily')
+        daily_dataset_pop = cases_population_ratio(population, daily_dataset.T) 
+        graph_subplot(dataset=daily_dataset_pop.T, log=log, title='Daily cases by 1M population', ylabel='', xlabel='', ax=axes[1,1], type='line', tf='daily')
     plt.show()
 
 #MAIN PROGRAM
