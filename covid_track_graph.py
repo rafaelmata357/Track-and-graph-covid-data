@@ -429,9 +429,9 @@ def graph_subplot(dataset, log, title, ylabel, xlabel, ax, type, tf):
     elif type=='bar' and tf == 'monthly':
      
         #ax.xaxis.set_major_formatter(date_form)
-        ax.xaxis.set_major_formatter(DateFormatter('%m')) 
+        #ax.xaxis.set_major_formatter(DateFormatter('%m')) 
         #
-        ax.bar(dataset.index, dataset['pct'],width=5)   
+        ax.bar(dataset['m'], dataset['pct'])   
     elif type=='bar':
         dataset.plot.bar(ax=ax, grid=True, logy=log )
     elif type=='line':
@@ -571,6 +571,7 @@ def partial_results(dataset, start_date, tf):
         acumulado.append(pct_week) 
     result = sub_df.to_frame() 
     result['pct'] = acumulado 
+   
     
     return result
 
@@ -761,7 +762,10 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         graph_subplot(dataset=acc_rec_dataset, log=log, title='Accumulated and Recovered cases', ylabel=ylabel, xlabel='', ax=axes[0,0], type='area', tf='daily')
         
         df_w = partial_results(daily_dataset.iloc[:,0], start_date,'weekly')
+        
         df_m = partial_results(daily_dataset.iloc[:,0], start_date,'monthly')
+        df_m['m'] = df_m.index.month_name()
+        print(df_m)
         
         graph_subplot(dataset=df_w, log=log, title='%Weekly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[1,0], type='bar', tf='weekly')
         graph_subplot(dataset=df_m, log=log, title='%Monthly accumulated vs total cases', ylabel=ylabel, xlabel='', ax=axes[2,0], type='bar', tf='monthly')
