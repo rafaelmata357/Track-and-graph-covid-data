@@ -733,7 +733,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
             graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='  Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[1,2], type='bar', tf=tf)
             graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], type='line', tf='daily')
             graph_subplot(dataset=daily_test_dataset, log=log, title='Daily tests vs Confirmed cases', ylabel='', xlabel='', ax=axes[2,2], type='scatter', tf='daily')
-    elif dash==3:
+    elif dash==4:
         title = countries[0]
         plot_benford(ax=axes[0,0], dataset=daily_dataset[countries[0]], title=title, xlabel='')
         title = countries[1]
