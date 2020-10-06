@@ -3,7 +3,7 @@
 # 
 # PROGRAMMER   : Rafael Mata M.
 # DATE CREATED :  2 April 2020                                 
-# REVISED DATE :  3 October 2020
+# REVISED DATE :  6 October 2020
 # PURPOSE: Create a program to track the daily covid raw data from the Johns Hopkins University
 #          and generate two charts containning the top 5 countries and the central america an Mx data 
 #          
@@ -310,7 +310,7 @@ def dashboard_1(dataset, scale, top_n, countries,  title_option):
     
     title = '2020 {} Covid Accumulated confirmed cases until {}'.format(title_option, last_day.strftime('%d/%m'))
 
-    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(13,7))  #Generate subplots
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(16,7))  #Generate subplots
     fig.suptitle(title, fontsize=17, c='b')
 
     graphca = dataset.loc[countries]  # Get  CA data to graph
