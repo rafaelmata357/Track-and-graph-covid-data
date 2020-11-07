@@ -711,6 +711,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         death_daily_dataset = get_daily_values(death_dataset.T)
 
         rolling_death_ds = death_daily_dataset[countries].rolling('14D') # 14 days Rolling window for death dataset
+        
 
         try:
             daily_test_dataset = daily_test(URL, countries, daily_dataset, 'daily') 
@@ -731,8 +732,11 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         graph_subplot(dataset=death_dataset_pop.T, log=log, title='Death Accumulated cases by 1M population', ylabel='', xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], type='line', tf='daily')
     
         if test_data and not test_ratio_df.empty:
-            graph_subplot(dataset=test_ratio_df[['Positive Cases','WHO Recommend value']], log=False, title='  Test to positive cases ratio {}tly'.format(tf), ylabel='%', xlabel='', ax=axes[1,2], type='bar', tf=tf)
+            rolling_tests_df = daily_test_dataset['tests'].rolling('14D')
+            
+            graph_subplot(dataset=rolling_tests_df.sum(), log=log, title='Daily Tests 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,2], type='line', tf='daily')
             graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], type='line', tf='daily')
+            
             graph_subplot(dataset=daily_test_dataset, log=log, title='Daily tests vs Confirmed cases', ylabel='', xlabel='', ax=axes[2,2], type='scatter', tf='daily')
     elif dash==4:
         title = countries[0]
