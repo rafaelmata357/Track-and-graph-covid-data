@@ -723,10 +723,10 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
             test_data = False
     
         fatality_rate_dataset = death_dataset/accumulated_dataset*100
-        graph_subplot(dataset=rolling.sum(), log=log, title='Cumulative 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,0], type='line', tf='daily')
+        graph_subplot(dataset=rolling.sum(), log=log, title='Total cases accumulated 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,0], type='line', tf='daily')
         graph_subplot(dataset=death_daily_dataset, log=log, title='Daily Death cases', ylabel=ylabel, xlabel='', ax=axes[0,1], type='line', tf='daily')
         graph_subplot(dataset=fatality_rate_dataset.T, log=log, title='%Fatality rate', ylabel='%', xlabel='', ax=axes[2,1], type='line', tf=tf)
-        graph_subplot(dataset=rolling_death_ds.sum(), log=log, title='Cumulative Death cases 14 days rolling window', ylabel='', xlabel='', ax=axes[1,1], type='line', tf=tf)
+        graph_subplot(dataset=rolling_death_ds.sum(), log=log, title='Death cases accumulated 14 days rolling window', ylabel='', xlabel='', ax=axes[1,1], type='line', tf=tf)
         death_dataset_pop = cases_population_ratio(population, death_dataset) 
 
         graph_subplot(dataset=death_dataset_pop.T, log=log, title='Death Accumulated cases by 1M population', ylabel='', xlabel='*Source Data: JHU CSSE COVID-19 Dataset', ax=axes[2,0], type='line', tf='daily')
@@ -734,7 +734,7 @@ def dashboard_2(accumulated_dataset, recovered_dataset, death_dataset, scale, co
         if test_data and not test_ratio_df.empty:
             rolling_tests_df = daily_test_dataset['tests'].rolling('14D')
             
-            graph_subplot(dataset=rolling_tests_df.sum(), log=log, title='Daily Tests 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,2], type='line', tf='daily')
+            graph_subplot(dataset=rolling_tests_df.sum(), log=log, title='Daily Tests accumulated 14 days rolling window', ylabel=ylabel, xlabel='', ax=axes[1,2], type='line', tf='daily')
             graph_subplot(dataset=daily_test_dataset['tests'], log=log, title='Daily Tests', ylabel='', xlabel='', ax=axes[0,2], type='line', tf='daily')
             
             graph_subplot(dataset=daily_test_dataset, log=log, title='Daily tests vs Confirmed cases', ylabel='', xlabel='', ax=axes[2,2], type='scatter', tf='daily')
